@@ -3,10 +3,10 @@ services:
   mysql-db:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: user
+      MYSQL_ROOT_PASSWORD: treepaech
       MYSQL_DATABASE: Cloud_App_2023
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user
+      MYSQL_USER: test
+      MYSQL_PASSWORD: guntreepaech
     ports:
       - "3306:3306"
     volumes:
