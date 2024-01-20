@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: treepaech
       MYSQL_DATABASE: Cloud
       MYSQL_USER: test
-      MYSQL_PASSWORD: guntreepaech
+      MYSQL_PASSWORD: user
     ports:
       - "3306:3306"
     volumes:
