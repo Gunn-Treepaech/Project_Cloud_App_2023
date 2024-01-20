@@ -4,7 +4,7 @@ services:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: treepaech
-      MYSQL_DATABASE: Cloud_App_2023
+      MYSQL_DATABASE: Cloud
       MYSQL_USER: test
       MYSQL_PASSWORD: guntreepaech
     ports:
@@ -14,7 +14,7 @@ services:
 
   init-script:
     image: mysql:latest
-    command: [ '--host=mysql-db', '--user=root', '--password=user', '--database=Cloud_App_2023', '-e', 'source /docker-entrypoint-initdb.d/init.sql' ]
+    command: [ '--host=mysql-db', '--user=root', '--password=treepaech', '--database=Cloud', '-e', 'source /docker-entrypoint-initdb.d/init.sql' ]
     volumes:
       - ./init-scripts:/docker-entrypoint-initdb.d
 
