@@ -1,0 +1,22 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: user
+      MYSQL_DATABASE: Cloud_App_2023
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  init-script:
+    image: mysql:latest
+    command: [ '--host=mysql-db', '--user=root', '--password=user', '--database=Cloud_App_2023', '-e', 'source /docker-entrypoint-initdb.d/init.sql' ]
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql_data:
