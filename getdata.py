@@ -18,7 +18,7 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 # คำสั่ง SQL เพื่อดึงข้อมูล
-sql_query = "SELECT * FROM interest_rates"
+sql_query = "SELECT * FROM interest_rates;"
 
 # ทำการ execute คำสั่ง SQL
 cursor.execute(sql_query)

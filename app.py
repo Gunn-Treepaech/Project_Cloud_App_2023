@@ -4,11 +4,11 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def home():
     return 'Calculate Loan Schedule Program'
 
-@app.route('/data')
+@app.route('/data', methods=['GET'])
 def data():
     data = {}
     filename='data.json'
@@ -17,7 +17,7 @@ def data():
             data = json.load(file)
     return jsonify(data)
 
-@app.route('/delete_jsonflie')
+@app.route('/delete_jsonflie', methods=['GET'])
 def delete_json_file(file_path='data.json'):
     msg = ""
     try:
@@ -28,6 +28,10 @@ def delete_json_file(file_path='data.json'):
     except Exception as e:
          msg = f"เกิดข้อผิดพลาดขณะลบไฟล์: {e}"
     return msg
+
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    return 'Calculate Loan Schedule Program'
 
 def days_in_month(month, year):
     if month == 2 and ((year % 4 == 0) or ((year % 100 == 0) and (year % 400 == 0))):
@@ -102,5 +106,5 @@ def write_json(new_data, bank, filename='data.json'):
         json.dump(data, file, indent=2)
 
 if __name__ == '__main__':
-    #calculate_loan_schedule(100000,2.95,15000,8.8,2024,11)
+    calculate_loan_schedule(100000,2.95,15000,8.8,2024,11)
     app.run()
