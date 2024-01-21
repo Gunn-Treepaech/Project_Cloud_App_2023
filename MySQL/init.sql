@@ -8,5 +8,7 @@ CREATE TABLE IF NOT EXISTS interest_rates (
 );
 
 INSERT INTO interest_rates (bank_name, years_interest, MRR) VALUES
-    ('SCB', 2.80, 5.98),
-    ('UOB', 2.95, 8.8);
+    ('SCB', 0, 7.300),
+    ('UOB', 0, 8.800);
+    ('KTB', 0, 7.570);
+    ('Kbank', 0, 7.300);
