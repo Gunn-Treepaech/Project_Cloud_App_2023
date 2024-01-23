@@ -1,2 +1,2 @@
 ﻿Flask
-mysql-connector-python
+mysql-connector-python==8.3.0
