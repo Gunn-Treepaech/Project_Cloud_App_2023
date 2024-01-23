@@ -9,27 +9,49 @@ def days_in_month(month, year):
         day = 30
     return day
 
-def calculate_loan_schedule(initial_loan, years_interest, total_payment, MRR, start_year, start_month):
+def calculate_loan_schedule(**config):
     result_list = []
     overpayment = 0
-    remaining_principal = initial_loan
-    current_year = start_year
+    
+   #------------------------------------------------------------
+    start_month = config['start_month']
+    current_year = config['start_year']
+    remaining_principal = config['initial_loan']
+    fixed_interest = config['fixed_interest']
+    fixed_year = config['fixed_year']
+    MRR = config['MRR']
+    monthly_payment = config['monthly_payment']
+    chang_interest = config['chang_interest']
+   #------------------------------------------------------------
+    
 
     for month in range(start_month, start_month + 36):
+        
         until_the_day = days_in_month(start_month, current_year)
 
         display_month = month % 12
         if month % 12 == 0:
             display_month = 12
-        if month == start_month + 23:
-            years_interest = MRR - years_interest
+            
+        if fixed_year is not None:
+            if fixed_year == 1:
+                if month == start_month + 12:
+                    fixed_interest = MRR - chang_interest[0]
+                if month == start_month + 24:
+                    fixed_interest = MRR - chang_interest[1]
+            if fixed_year == 2:
+                if month == start_month + 24:
+                    fixed_interest = MRR - chang_interest[0]
+            
+        print(f'Month ({display_month}, {current_year}): interest == {fixed_interest}')
+            
         if remaining_principal <= 0:
             print(f"Loan fully repaid. Exiting calculation.")
             break
 
-        interest = (remaining_principal * years_interest) / 36500
+        interest = (remaining_principal * fixed_interest) / 36500
         interest_money = until_the_day * interest
-        balance = total_payment - interest_money
+        balance = monthly_payment - interest_money
         remaining_principal = remaining_principal - balance
         initial_loan = remaining_principal
 
@@ -50,13 +72,16 @@ def calculate_loan_schedule(initial_loan, years_interest, total_payment, MRR, st
             
     return result_list
 # -----------------------------------------------------------------------------------------------
-# ให้ผู้ใช้กรอก
-initial_loan = 100000 # Replace with your initial loan amount
-years_interest = 2.95
-total_payment = 15000  # Replace with your total monthly payment
-MRR = 8.8
-start_month = 11
-start_year = 2024
+config = {
+    'start_month': 11, 
+    'start_year': 2024, 
+    'initial_loan': 100000000, 
+    'fixed_interest': 2.95, 
+    'fixed_year': 1, 
+    'MRR': 8.8, 
+    'monthly_payment': 15000,
+    'chang_interest': (2.95, 1.95)
+}
 # ------------------------------------------------------------------------------------------------
-x = calculate_loan_schedule(initial_loan, years_interest, total_payment, MRR, start_year, start_month)
+x = calculate_loan_schedule(**config)
 print(x)
