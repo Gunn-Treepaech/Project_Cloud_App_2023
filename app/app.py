@@ -128,4 +128,4 @@ def getdatadb():
 
 if __name__ == '__main__':
     #calculate_loan_schedule(100000,2.95,15000,8.8,2024,11)
-    app.run()
+    app.run(host='0.0.0.0')
