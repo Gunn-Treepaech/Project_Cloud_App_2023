@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+import mysql.connector
 import json
 import os
 
@@ -32,6 +33,10 @@ def delete_json_file(file_path='data.json'):
 @app.route('/calculate', methods=['POST'])
 def calculate():
     return 'Calculate Loan Schedule Program'
+
+@app.route('/showdatadb', methods=['GET'])
+def showdatadb():
+    return jsonify(getdatadb())
 
 def days_in_month(month, year):
     if month == 2 and ((year % 4 == 0) or ((year % 100 == 0) and (year % 400 == 0))):
@@ -105,6 +110,22 @@ def write_json(new_data, bank, filename='data.json'):
     with open(filename, 'w') as file:
         json.dump(data, file, indent=2)
 
+def getdatadb():
+    config = {
+        'user': 'user',
+        'password': 'user',
+        'host': '10.161.112.161',
+        'port': '3306',
+        'database': 'financial_data'
+    }
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM interest_rates;')
+    results = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return results
+
 if __name__ == '__main__':
-    calculate_loan_schedule(100000,2.95,15000,8.8,2024,11)
+    #calculate_loan_schedule(100000,2.95,15000,8.8,2024,11)
     app.run()
