@@ -114,7 +114,7 @@ def getdatadb():
     config = {
         'user': 'user',
         'password': 'user',
-        'host': '10.161.112.161',
+        'host': 'db',
         'port': '3306',
         'database': 'financial_data'
     }
