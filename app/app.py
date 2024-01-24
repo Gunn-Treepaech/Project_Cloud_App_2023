@@ -165,5 +165,5 @@ if __name__ == '__main__':
     "bank": "UOB"
 }
     # ------------------------------------------------------------------------------------------------
-    calculate_loan_schedule(**config)
-    #app.run(host='0.0.0.0')
+    #calculate_loan_schedule(**config)
+    app.run(host='0.0.0.0')
