@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import mysql.connector
 import json
 import os
@@ -32,7 +32,14 @@ def delete_json_file(file_path='data.json'):
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    return 'Calculate Loan Schedule Program'
+    test = request.json
+    calculate_loan_schedule(**test)
+    data = {}
+    filename='data.json'
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            data = json.load(file)
+    return jsonify(data)
 
 @app.route('/showdatadb', methods=['GET'])
 def showdatadb():
@@ -51,7 +58,6 @@ def days_in_month(month, year):
 
 def calculate_loan_schedule(**config):
     overpayment = 0
-    
     #------------------------------------------------------------
     start_month = config['start_month']
     current_year = config['start_year']
@@ -63,14 +69,13 @@ def calculate_loan_schedule(**config):
     chang_interest = config['chang_interest']
     bank = config['bank']
    #------------------------------------------------------------
-
     for month in range(start_month, start_month + 36):
         until_the_day = days_in_month(start_month, current_year)
-
+        
         display_month = month % 12
         if month % 12 == 0:
             display_month = 12
-            
+        
         if fixed_year is not None:
             if fixed_year == 1:
                 if month == start_month + 12:
@@ -79,8 +84,7 @@ def calculate_loan_schedule(**config):
                     fixed_interest = MRR - chang_interest[1]
             if fixed_year == 2:
                 if month == start_month + 24:
-                    fixed_interest = MRR - chang_interest[0]
-            
+                    fixed_interest = MRR - chang_interest[0]  
         #print(f'Month ({display_month}, {current_year}): interest == {fixed_interest}')
             
         if remaining_principal <= 0:
@@ -150,16 +154,16 @@ def getdatadb():
 if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------
     config = {
-        'start_month': 11, 
-        'start_year': 2024, 
-        'initial_loan': 100000000, 
-        'fixed_interest': 2.95, 
-        'fixed_year': 3, 
-        'MRR': 8.8, 
-        'monthly_payment': 15000,
-        'chang_interest': (2.95, 1.95),
-        'bank': 'UOB'
-    }
+    "start_month": 11,
+    "start_year": 2024,
+    "initial_loan": 100000000,
+    "fixed_interest": 2.95,
+    "fixed_year": 3,
+    "MRR": 8.8,
+    "monthly_payment": 15000,
+    "chang_interest": [2.95, 1.95],
+    "bank": "UOB"
+}
     # ------------------------------------------------------------------------------------------------
     calculate_loan_schedule(**config)
     #app.run(host='0.0.0.0')
