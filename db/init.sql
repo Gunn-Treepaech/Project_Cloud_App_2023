@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS interest_rates (
     PRIMARY KEY (bank_name)
 );
 
-INSERT INTO interest_rates (bank_name, years_interest, MRR) VALUES
+INSERT INTO interest_rates (bank_name, update_MMR, years_interest, MRR) VALUES
     ('SCB', '02/10/2566', 0, 7.300),
     ('UOB', '04/10/2566', 0, 8.800),
     ('KTB', '20/11/2566', 0, 7.570),
