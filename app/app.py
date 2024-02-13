@@ -41,6 +41,7 @@ def calculate():
             data = json.load(file)
     return jsonify(data)
 
+
 @app.route('/showdatadb', methods=['GET'])
 def showdatadb():
     return jsonify(getdatadb())
