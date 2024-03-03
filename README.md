@@ -1,8 +1,4 @@
 # Project Cloud App 2023
-  ### ติดตั้ง dependencies ที่ระบุในไฟล์ requirements.txt ลงในโปรเจ็กต์ Python
-  ```sh
-  pip install -r requirements.txt
-  ```
   ### เริ่มต้นและรันแอปพลิเคชันที่ได้กำหนดไว้ใน Docker Compose configuration file
   ```sh
   sudo docker-compose up -d --build
@@ -10,4 +6,51 @@
   ### หรือ
   ```sh
   sudo docker-compose up --build
+  ```
+# อธิบายการทำงานแต่ละ Path
+  ### "/" - GET
+  - การใช้งาน: เป็นหน้าหลักของแอปพลิเคชัน
+  - วิธีใช้: เมื่อเข้าถึงหน้าหลักด้วยเมทอด GET จะแสดงข้อความ "Calculate Loan Schedule Program"
+  ### "/calculate" - POST
+  - การใช้งาน: ใช้สำหรับคำนวณตารางผ่อนชำระสินเชื่อ
+  - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน calculate_loan_schedule และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าผลลัพธ์เป็น JSON ผ่าน HTTP response
+  - ตัวอย่างการส่งข้อมูลเข้าไปใน "/calculate"
+  ```sh
+  {
+    "start_month": 11,
+    "start_year": 2024,
+    "initial_loan": 100000000,
+    "fixed_interest": 2.95,
+    "fixed_year": 3,
+    "MRR": 8.8,
+    "monthly_payment": 15000,
+    "chang_interest": [2.95, 1.95],
+    "bank": "UOB"
+  }
+  ```
+  ### "/showdatadb" - GET
+  - การใช้งาน: แสดงข้อมูลทั้งหมดในฐานข้อมูล
+  - วิธีใช้: เมื่อทำการเข้าถึงเส้นทางนี้ด้วยเมทอด GET จะแสดงข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON
+  ### "/inserdata" - POST
+  - การใช้งาน: ใช้สำหรับเพิ่มหรืออัปเดตข้อมูลในฐานข้อมูล
+  - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน insert_or_update_data และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON ผ่าน HTTP response
+  - ตัวอย่างการส่งข้อมูลเข้าไปใน "/inserdata"
+  ```sh
+  {
+    "MRR": "8.00",
+    "bank_name": "SCB",
+    "update_MRR": "02/10/2566",
+    "years_interest": "0.00"
+  }
+  ```
+  ### "/addcolum" - POST
+  - การใช้งาน: ใช้สำหรับเพิ่มคอลัมน์ในฐานข้อมูล
+  - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน add_column และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON ผ่าน HTTP response
+  - ❌ข้อควรระวัง❌ ถ้าเพิ่ม column แล้วต้องไปแก้ code ในส่วน inserdata ด้วย
+  - ตัวอย่างการส่งข้อมูลเข้าไปใน "/addcolum"
+  ```sh
+  {
+    "column_name": "column_name" ,
+    "data_type": "VARCHAR(50)"
+  }
   ```
