@@ -47,6 +47,10 @@
   - การใช้งาน: ใช้สำหรับเพิ่มคอลัมน์ในฐานข้อมูล
   - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน add_column และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON ผ่าน HTTP response
   - ❌ข้อควรระวัง❌ ถ้าเพิ่ม column แล้วต้องไปเปลี่ยน code ใน inserdata ด้วยถ้าจะอยากให้ column ใหม่มีการอัพเดทข้อมูล
+  - ตัวอย่างการแก้ code ใน inserdata จะเป็นดังนี้
+  ```sh
+  query_update = f"UPDATE interest_rates SET update_MRR = '{update_MRR}', years_interest = {years_interest}, MRR = {MRR}, column_name = '{column_name}' WHERE bank_name = '{bank_name}'"
+  ```
   - ตัวอย่างการส่งข้อมูลเข้าไปใน "/addcolumn"
   ```sh
   {
