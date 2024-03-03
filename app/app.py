@@ -39,6 +39,12 @@ def insertdatadb():
     insert_or_update_data(**datas)
     return jsonify(getdatadb())
 
+@app.route('/addcolum', methods=['POST'])
+def addcolum():
+    datas = request.json
+    add_column(**datas)
+    return jsonify(getdatadb())
+
 def days_in_month(month, year):
     if month == 2 and ((year % 4 == 0) or ((year % 100 == 0) and (year % 400 == 0))):
         day = 29
@@ -165,6 +171,28 @@ def insert_or_update_data(**datas):
             cursor.close()
             connection.close()
     return 0
+
+def add_column(**datas):
+    # --------------------------------------------
+    column_name = datas['column_name']
+    data_type = datas['data_type']
+    # --------------------------------------------
+    try:
+        # ทำการเชื่อมต่อกับฐานข้อมูล
+        connection = mysql.connector.connect(**config)
+        if connection.is_connected():
+            cursor = connection.cursor()
+            # สร้างคอลัมน์ใหม่
+            query_add_column = f"ALTER TABLE interest_rates ADD COLUMN {column_name} {data_type}"
+            cursor.execute(query_add_column)
+            # ยืนยันการทำรายการ
+            connection.commit()
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
 
 if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------
