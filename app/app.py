@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
-import json
-import os
+
+data = {}
 
 app = Flask(__name__)
 CORS(app)
@@ -11,38 +11,11 @@ CORS(app)
 def home():
     return 'Calculate Loan Schedule Program'
 
-@app.route('/data', methods=['GET'])
-def data():
-    data = {}
-    filename='data.json'
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
-            data = json.load(file)
-    return jsonify(data)
-
-@app.route('/delete_jsonflie', methods=['GET'])
-def delete_json_file(file_path='data.json'):
-    msg = ""
-    try:
-        os.remove(file_path)
-        msg = f"ลบไฟล์ {file_path} เรียบร้อยแล้ว"
-    except FileNotFoundError:
-         msg = f"ไม่พบไฟล์ {file_path}"
-    except Exception as e:
-         msg = f"เกิดข้อผิดพลาดขณะลบไฟล์: {e}"
-    return msg
-
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    test = request.json
-    calculate_loan_schedule(**test)
-    data = {}
-    filename='data.json'
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
-            data = json.load(file)
+    datas = request.json
+    calculate_loan_schedule(**datas)
     return jsonify(data)
-
 
 @app.route('/showdatadb', methods=['GET'])
 def showdatadb():
@@ -59,18 +32,18 @@ def days_in_month(month, year):
         day = 30
     return day
 
-def calculate_loan_schedule(**config):
+def calculate_loan_schedule(**datas):
     overpayment = 0
     #------------------------------------------------------------
-    start_month = config['start_month']
-    current_year = config['start_year']
-    remaining_principal = config['initial_loan']
-    fixed_interest = config['fixed_interest']
-    fixed_year = config['fixed_year']
-    MRR = config['MRR']
-    monthly_payment = config['monthly_payment']
-    chang_interest = config['chang_interest']
-    bank = config['bank']
+    start_month = datas['start_month']
+    current_year = datas['start_year']
+    remaining_principal = datas['initial_loan']
+    fixed_interest = datas['fixed_interest']
+    fixed_year = datas['fixed_year']
+    MRR = datas['MRR']
+    monthly_payment = datas['monthly_payment']
+    chang_interest = datas['chang_interest']
+    bank = datas['bank']
    #------------------------------------------------------------
     for month in range(start_month, start_month + 36):
         until_the_day = days_in_month(start_month, current_year)
@@ -127,16 +100,11 @@ def calculate_loan_schedule(**config):
         if month % 12 == 0:
             current_year += 1
 
-def write_json(new_data, bank, filename='data.json'):
-    data = {}
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
-            data = json.load(file)
+def write_json(new_data, bank):
     if bank not in data:
         data[bank] = []
     data[bank].append(new_data)
-    with open(filename, 'w') as file:
-        json.dump(data, file, indent=2)
+    
 
 def getdatadb():
     config = {
@@ -156,7 +124,7 @@ def getdatadb():
 
 if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------
-    config = {
+    test = {
     "start_month": 11,
     "start_year": 2024,
     "initial_loan": 100000000,
@@ -168,5 +136,6 @@ if __name__ == '__main__':
     "bank": "UOB"
 }
     # ------------------------------------------------------------------------------------------------
-    #calculate_loan_schedule(**config)
+    # calculate_loan_schedule(**test)
+    # print(data)
     app.run(host='0.0.0.0')
