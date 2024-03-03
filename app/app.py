@@ -1,10 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import mysql.connector
+from mysql.connector import Error
 import json
 
 app = Flask(__name__)
 CORS(app)
+
+# ---------------------------------------------------------------
+config = {
+        'user': 'user',
+        'password': 'user',
+        'host': 'db',
+        'port': '3306',
+        'database': 'financial_data'
+    }
+# ---------------------------------------------------------------
 
 @app.route('/', methods=['GET'])
 def home():
@@ -20,6 +31,12 @@ def calculate():
 
 @app.route('/showdatadb', methods=['GET'])
 def showdatadb():
+    return jsonify(getdatadb())
+
+@app.route('/inserdata', methods=['POST'])
+def insertdatadb():
+    datas = request.json
+    insert_or_update_data(**datas)
     return jsonify(getdatadb())
 
 def days_in_month(month, year):
@@ -106,15 +123,7 @@ def write_json(new_data, bank):
         result_data[bank] = []
     result_data[bank].append(new_data)
     
-
 def getdatadb():
-    config = {
-        'user': 'user',
-        'password': 'user',
-        'host': 'db',
-        'port': '3306',
-        'database': 'financial_data'
-    }
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor(dictionary=True)
     cursor.execute('SELECT * FROM interest_rates;')
@@ -122,6 +131,40 @@ def getdatadb():
     cursor.close()
     connection.close()
     return results
+
+def insert_or_update_data(**datas):
+    # --------------------------------------------
+    bank_name = datas['bank_name']
+    update_MRR = datas['update_MRR']
+    years_interest = datas['years_interest']
+    MRR = datas['MRR']
+    # --------------------------------------------
+    try:
+        connection = mysql.connector.connect(**config)
+        if connection.is_connected():
+            cursor = connection.cursor()
+            # ตรวจสอบว่ามีข้อมูลในฐานข้อมูลหรือไม่
+            query_check = f"SELECT * FROM interest_rates WHERE bank_name = '{bank_name}'"
+            cursor.execute(query_check)
+            existing_data = cursor.fetchone()
+            if existing_data:
+                # ถ้ามีข้อมูลแล้วให้ทำการอัพเดท
+                query_update = f"UPDATE interest_rates SET update_MRR = '{update_MRR}', years_interest = {years_interest}, MRR = {MRR} WHERE bank_name = '{bank_name}'"
+                cursor.execute(query_update)
+            else:
+                # ถ้าไม่มีข้อมูลให้ทำการเพิ่มข้อมูลใหม่
+                query_insert = f"INSERT INTO interest_rates (bank_name, update_MRR, years_interest, MRR) VALUES ('{bank_name}', '{update_MRR}', {years_interest}, {MRR})"
+                cursor.execute(query_insert)
+            # ยืนยันการทำรายการ
+            connection.commit()
+    except Error as e:
+        return e
+
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+    return 0
 
 if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------
@@ -137,6 +180,4 @@ if __name__ == '__main__':
     "bank": "UOB"
 }
     # ------------------------------------------------------------------------------------------------
-    # calculate_loan_schedule(**test)
-    # print(result_data)
     app.run(host='0.0.0.0')
