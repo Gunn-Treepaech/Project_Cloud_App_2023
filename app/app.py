@@ -3,8 +3,6 @@ from flask_cors import CORS
 import mysql.connector
 import json
 
-data = {}
-
 app = Flask(__name__)
 CORS(app)
 
@@ -14,10 +12,11 @@ def home():
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    data = {}
+    global result_data
+    result_data = {}
     datas = request.json
     calculate_loan_schedule(**datas)
-    return jsonify(data)
+    return jsonify(result_data)
 
 @app.route('/showdatadb', methods=['GET'])
 def showdatadb():
@@ -103,9 +102,9 @@ def calculate_loan_schedule(**datas):
             current_year += 1
 
 def write_json(new_data, bank):
-    if bank not in data:
-        data[bank] = []
-    data[bank].append(new_data)
+    if bank not in result_data:
+        result_data[bank] = []
+    result_data[bank].append(new_data)
     
 
 def getdatadb():
