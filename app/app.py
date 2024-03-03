@@ -39,8 +39,8 @@ def insertdatadb():
     insert_or_update_data(**datas)
     return jsonify(getdatadb())
 
-@app.route('/addcolum', methods=['POST'])
-def addcolum():
+@app.route('/addcolumn', methods=['POST'])
+def addcolumn():
     datas = request.json
     add_column(**datas)
     return jsonify(getdatadb())
