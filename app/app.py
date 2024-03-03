@@ -14,6 +14,7 @@ def home():
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
+    data = {}
     datas = request.json
     calculate_loan_schedule(**datas)
     return jsonify(data)
