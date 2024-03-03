@@ -138,5 +138,5 @@ if __name__ == '__main__':
 }
     # ------------------------------------------------------------------------------------------------
     # calculate_loan_schedule(**test)
-    # print(data)
+    # print(result_data)
     app.run(host='0.0.0.0')
