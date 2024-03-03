@@ -188,11 +188,12 @@ def add_column(**datas):
             # ยืนยันการทำรายการ
             connection.commit()
     except Error as e:
-        print("Error:", e)
+        return e
     finally:
         if connection.is_connected():
             cursor.close()
             connection.close()
+    return 0
 
 if __name__ == '__main__':
     # -----------------------------------------------------------------------------------------------
