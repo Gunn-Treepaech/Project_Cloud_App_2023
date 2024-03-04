@@ -9,6 +9,8 @@ services:
       - "5000:5000"
     depends_on:
       - db
+    networks:
+      - my-custom-network
 
   db:
     image: mysql:latest
@@ -22,3 +24,16 @@ services:
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data:/var/lib/mysql
+    networks:
+      - my-custom-network
+
+  front:  # Replace with your desired service name
+    build: ./frontend  # Build the image from the current directory (./)
+    ports:
+      - "5173:5173"  # Map host port 5173 to container port 5173
+    command: npm run dev  # Override the default command in the Dockerfile
+    networks:
+      - my-custom-network
+
+networks:
+  my-custom-network:

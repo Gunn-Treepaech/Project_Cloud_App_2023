@@ -75,7 +75,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://192.168.31.129:5000/calculate", frome1)
+                axios.post("http://localhost:5000/calculate", frome1)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone1(respons);
@@ -106,7 +106,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://192.168.31.129:5000/calculate", frome2)
+                axios.post("http://localhost:5000/calculate", frome2)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone2(respons);
@@ -137,7 +137,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://192.168.31.129:5000/calculate", frome3)
+                axios.post("http://localhost:5000/calculate", frome3)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone3(respons);
@@ -170,7 +170,7 @@ function Calcultor(){
           ) {
             
             try {
-                axios.post("http://192.168.31.129:5000/calculate", data)
+                axios.post("http://localhost:5000/calculate", data)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone(respons);
