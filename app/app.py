@@ -141,31 +141,39 @@ def getdatadb():
 def insert_or_update_data(**datas):
     # --------------------------------------------
     bank_name = datas['bank_name']
-    update_MRR = datas['update_MRR']
-    years_interest = datas['years_interest']
-    MRR = datas['MRR']
+    update_MRR = datas.get('update_MRR', None)
+    years_interest = datas.get('years_interest', None)
+    MRR = datas.get('MRR', None)
     # --------------------------------------------
     try:
         connection = mysql.connector.connect(**config)
         if connection.is_connected():
             cursor = connection.cursor()
-            # ตรวจสอบว่ามีข้อมูลในฐานข้อมูลหรือไม่
+            # Check if data exists in the database
             query_check = f"SELECT * FROM interest_rates WHERE bank_name = '{bank_name}'"
             cursor.execute(query_check)
             existing_data = cursor.fetchone()
             if existing_data:
-                # ถ้ามีข้อมูลแล้วให้ทำการอัพเดท
-                query_update = f"UPDATE interest_rates SET update_MRR = '{update_MRR}', years_interest = {years_interest}, MRR = {MRR} WHERE bank_name = '{bank_name}'"
+                # Update only the provided values
+                update_values = []
+                if update_MRR is not None:
+                    update_values.append(f"update_MRR = '{update_MRR}'")
+                if years_interest is not None:
+                    update_values.append(f"years_interest = {years_interest}")
+                if MRR is not None:
+                    update_values.append(f"MRR = {MRR}")
+                # Build the update query
+                query_update = f"UPDATE interest_rates SET {', '.join(update_values)} WHERE bank_name = '{bank_name}'"
                 cursor.execute(query_update)
             else:
-                # ถ้าไม่มีข้อมูลให้ทำการเพิ่มข้อมูลใหม่
+                # Insert new data
                 query_insert = f"INSERT INTO interest_rates (bank_name, update_MRR, years_interest, MRR) VALUES ('{bank_name}', '{update_MRR}', {years_interest}, {MRR})"
                 cursor.execute(query_insert)
-            # ยืนยันการทำรายการ
+
+            # Confirm the transaction
             connection.commit()
     except Error as e:
         return e
-
     finally:
         if connection.is_connected():
             cursor.close()
