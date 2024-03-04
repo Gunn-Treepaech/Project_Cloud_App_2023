@@ -1,11 +1,11 @@
 # Project Cloud App 2023 : เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน
-  - This project is created for the EN814710 course within GitHub as a repository. It serves as a space to store data, comprising frontend, backend, and database folders. Each folder contains a Dockerfile ready for use, and Docker-Compose that can create a "เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน" for immediate use.
+  This project is created for the EN814710 course within GitHub as a repository. It serves as a space to store data, comprising frontend, backend, and database folders. Each folder contains a Dockerfile ready for use, and Docker-Compose that can create a "เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน" for immediate use.
   ### Member
   - นายกฤษณะ  พุ่มพยอม  633040145-9
   - นายกิตินันท์  กุณโฮง   633040148-3
   - นายตรีเพชร ตรีจันทร์   633040156-4
   - นายเสฎฐวุฒิ นัตธิลม    633040607-7
-  ### เริ่มต้นและรันแอปพลิเคชันที่ได้กำหนดไว้ใน Docker Compose configuration file
+  ### เริ่มต้นติดตั้ง Docker
   ```sh
   sudo apt-get update
   ```
@@ -18,12 +18,33 @@
   ```sh
   git clone https://github.com/Gunn-Treepaech/Project_Cloud_App_2023.git
   ```
+  ### เริ่มต้นและรันแอปพลิเคชันที่ได้กำหนดไว้ใน Docker Compose configuration file
   ```sh
   sudo docker-compose up -d --build
   ```
   ### หรือ
   ```sh
   sudo docker-compose up --build
+  ```
+  ### Check image
+  ```sh
+  docker image ls
+  ```
+  ### Check container 
+  ```sh
+  docker container ls 
+  ```
+  ### Check network 
+  ```sh
+  docker network ls
+  ```
+  ### Check volumn 
+  ```sh
+  docker volumn ls
+  ```
+  ### shut down Docker Compose
+  ```sh
+  ddocker-compose down
   ```
 # อธิบายการทำงานแต่ละ Path
   ### "/" - GET
