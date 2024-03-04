@@ -1,5 +1,8 @@
 # Project Cloud App 2023 : เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน
   This project is created for the EN814710 course within GitHub as a repository. It serves as a space to store data, comprising frontend, backend, and database folders. Each folder contains a Dockerfile ready for use, and Docker-Compose that can create a "เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน" for immediate use.
+  - app : backend
+  - db : database
+  - frontend : frontend
   ### Member
   - นายกฤษณะ  พุ่มพยอม  633040145-9
   - นายกิตินันท์  กุณโฮง   633040148-3
@@ -41,6 +44,10 @@
   ### Check volumn 
   ```sh
   docker volumn ls
+  ```
+  ### Enter the website
+  ```sh
+  localhost:5173
   ```
   ### shut down Docker Compose
   ```sh
