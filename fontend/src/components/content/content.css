@@ -1,0 +1,17 @@
+.maginzy{
+    margin: 0 auto
+}
+.protest-riot-regular {
+    font-family: "Protest Riot", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .rice-dumpling {
+    width: 600px;
+    height: 600px;
+    background: #ffffff; /* สีของข้าวหลามตัด */
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* กำหนดรูปร่างเป็นสี่เหลี่ยมมุมข้าวหลามตัด */
+    
+  }
+  
+  
