@@ -20,6 +20,7 @@
   ```
   ```sh
   git clone https://github.com/Gunn-Treepaech/Project_Cloud_App_2023.git
+  cd Project_Cloud_App_2023
   ```
   ### เริ่มต้นและรันแอปพลิเคชันที่ได้กำหนดไว้ใน Docker Compose configuration file
   ```sh
@@ -57,7 +58,7 @@
   ### "/" - GET
   - การใช้งาน: เป็นหน้าหลักของแอปพลิเคชัน
   - วิธีใช้: เมื่อเข้าถึงหน้าหลักด้วยเมทอด GET จะแสดงข้อความ "Calculate Loan Schedule Program"
-  ### "/calculate" - POST
+  ### "api/calculate" - POST
   - การใช้งาน: ใช้สำหรับคำนวณตารางผ่อนชำระสินเชื่อ
   - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน calculate_loan_schedule และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าผลลัพธ์เป็น JSON ผ่าน HTTP response
   - ตัวอย่างการส่งข้อมูลเข้าไปใน "/calculate"
@@ -74,10 +75,10 @@
     "bank": "UOB"
   }
   ```
-  ### "/showdatadb" - GET
+  ### "api/showdatadb" - GET
   - การใช้งาน: แสดงข้อมูลทั้งหมดในฐานข้อมูล
   - วิธีใช้: เมื่อทำการเข้าถึงเส้นทางนี้ด้วยเมทอด GET จะแสดงข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON
-  ### "/inserdata" - POST
+  ### "api/inserdata" - POST
   - การใช้งาน: ใช้สำหรับเพิ่มหรืออัปเดตข้อมูลในฐานข้อมูล
   - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน insert_or_update_data และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON ผ่าน HTTP response
   - ตัวอย่างการส่งข้อมูลเข้าไปใน "/inserdata"
@@ -89,7 +90,7 @@
     "years_interest": "0.00"
   }
   ```
-  ### "/addcolumn" - POST
+  ### "api/addcolumn" - POST
   - การใช้งาน: ใช้สำหรับเพิ่มคอลัมน์ในฐานข้อมูล
   - วิธีใช้: รับข้อมูลที่ส่งมาเป็น JSON จาก HTTP POST request แล้วเรียกใช้ฟังก์ชัน add_column และส่งข้อมูลเข้าไป จากนั้นจะคืนค่าข้อมูลทั้งหมดในฐานข้อมูลเป็น JSON ผ่าน HTTP response
   - ❌ข้อควรระวัง❌ ถ้าเพิ่ม column แล้วต้องไปเปลี่ยน code ใน inserdata ด้วยถ้าจะอยากให้ column ใหม่มีการอัพเดทข้อมูล
