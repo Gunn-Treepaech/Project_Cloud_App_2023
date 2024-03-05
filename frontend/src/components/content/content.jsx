@@ -11,7 +11,7 @@ function Content(props){
             <div className="mt-14">
             <h1 className="text-[80px] text-black font-bold font-sans protest-riot-regular  ">Our Future <br/> Home  </h1><br />
             <p className="text-orange-600  text-lg">In order to have a home,a fmaily, <br/>
-            Financial security, and to ac achieve <br/>
+            Financial security, and to achieve <br/>
             one's dreams</p>
             </div>
             <div className="mask mask-diamond bg-white mt-9   ">

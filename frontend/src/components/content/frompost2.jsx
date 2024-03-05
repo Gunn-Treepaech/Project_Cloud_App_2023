@@ -238,9 +238,9 @@ function Frompots2({ sendDataToParent , value,checkcount,count,payment}){
     
                 <div>
                 <select onChange={handleSelectChangeY}  className="mb-2 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " name="fixed_year" id="">
-                    <option value="1">คงที่ปีที่ 1</option>
-                    <option value="2">ปีที่ 2</option>
-                    <option value="3">ปีที่ 3</option>
+                    <option value="1">คงที่ 1 ปี</option>
+                    <option value="2">คงที่ 2 ปี</option>
+                    <option value="3">คงที่ 3 ปี</option>
                 </select>
                 </div>
                 </div>
