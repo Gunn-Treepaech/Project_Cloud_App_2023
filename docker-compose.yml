@@ -32,6 +32,10 @@ services:
     ports:
       - "5173:5173"  # Map host port 5173 to container port 5173
     command: npm run dev  # Override the default command in the Dockerfile
+    links:
+      - app
+    depends_on:
+      - app
     networks:
       - my-custom-network
 

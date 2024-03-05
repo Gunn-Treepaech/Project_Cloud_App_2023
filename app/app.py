@@ -94,7 +94,7 @@ def calculate_loan_schedule(**datas):
         interest = (remaining_principal * fixed_interest) / 36500 #ดอกเบี้ย = เงินทั้งหมด * ดอกเบี้ยคงที่ 
         interest_money = until_the_day * interest #จ่ายดอกเบี้ย = วัน * ดอกเบี้ย
         balance = monthly_payment - interest_money #จ่ายยอด = จ่าย - จ่ายดอกเบี้ย
-        remaining_principal = remaining_principal - balance = #ยอดคงเหลือ = เงินทั้งหมด - จ่ายยอด
+        remaining_principal = remaining_principal - balance  #ยอดคงเหลือ = เงินทั้งหมด - จ่ายยอด
         initial_loan = remaining_principal
 
         if initial_loan <= 0:
