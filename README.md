@@ -51,7 +51,7 @@
   ```
   ### shut down Docker Compose
   ```sh
-  ddocker-compose down
+  docker-compose down
   ```
 # อธิบายการทำงานแต่ละ Path
   ### "/" - GET
