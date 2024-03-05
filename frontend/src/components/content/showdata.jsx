@@ -49,17 +49,17 @@ function Showdata(props){
                 <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " disabled value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
-}).format(Math.ceil(databla))}  />
+}).format(databla)}  />
                 <label className="" htmlFor="">จ่ายดอกเบี้ย</label>
                 <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" disabled placeholder="asda" value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
-}).format(Math.ceil(dataint))}  />
+}).format(dataint)}  />
                <label className="" htmlFor="">ยอดเงินกู้คงเหลือ</label>
                  <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" disabled placeholder="asda" value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
-}).format(Math.ceil(dataremai))} />
+}).format(dataremai)} />
                 
                 
             </div>

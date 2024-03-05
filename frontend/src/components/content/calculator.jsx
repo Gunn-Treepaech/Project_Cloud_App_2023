@@ -201,7 +201,10 @@ function Calcultor(){
         //const people = datafull.filter(data => data.bank);
         //console.log(people);
         e.preventDefault(); 
-        console.log(data);
+        console.log("from1test",data);
+        console.log("from2test",frome1);
+        console.log("from3test",frome2);
+        console.log("from4test",frome3);
         {fromsend(data)}
         {from1send(frome1)}
         {from2send(frome2)}
@@ -281,7 +284,7 @@ function Calcultor(){
   const handleSelectChangeY = (event) => {
     const selectedValue = event.target.value;
     setY(selectedValue)
-    setfixed_year(dataY)
+    setfixed_year(selectedValue)
     
   };
   
@@ -289,7 +292,9 @@ function Calcultor(){
     console.log("earn",dataY);
    let conta 
    if(dataY == "1"){
+    
     conta = (
+      
                     <div className="grid grid-cols-2 mx-4">
                       <div className="mr-3">
                       <input placeholder="MRR -" name="chang_interest" onChange={(e) => setchang_interest(e.target.value)} value={datachang_interest} className="text-center mr-2 mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
@@ -309,10 +314,12 @@ function Calcultor(){
     ) 
   }
   else if (dataY == "2"){
+    
+
     conta = (
         <div className="grid grid-cols-2 mx-4">
           <div className="mr-3">
-        <input placeholder="MRR -" onChange={(e) => setchang_interest2(e.target.value)}  name="chang_interest" value={datachang_interest2} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+        <input placeholder="MRR -" onChange={(e) => setchang_interest(e.target.value)}  name="chang_interest" value={datachang_interest} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
         </div>
         <div>
         <input value="ปีที่ 3" disabled  className="bg-white text-center mb-2 text-black    border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
@@ -378,9 +385,11 @@ const art3 =(check3)=>{
         let add 
         if (dataCount == 1){
             add = (<div className="flex"><Frompots sendDataToParent={tii} checkcount={art} count={dataCount} payment={datamonthly_payment} value={datarespone1} />
-            <div className="bg-blue-300 h-[620px] w-80  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center  shadow-2xl ">
+            <div className="grid items-center">
+            <div className="bg-blue-300 h-16   w-16  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center  shadow-2xl ">
             <div className="flex justify-center ">
             <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
+            </div>
             </div>
         </div></div>
 
@@ -388,9 +397,11 @@ const art3 =(check3)=>{
         }
         else if (dataCount == 2){
             add = (<div className="flex"><Frompots sendDataToParent={tii} value={datarespone1} payment={datamonthly_payment} checkcount={art} count={dataCount}/> <Frompots2 sendDataToParent={tii2} value={datarespone2} payment={datamonthly_payment} checkcount={art2} count={dataCount}/>
-            <div className="bg-blue-300 h-[620px] w-80  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center shadow-2xl  ">
+            <div className="grid items-center">
+            <div className="bg-blue-300 h-16   w-16  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center shadow-2xl  ">
             <div className="flex justify-center ">
             <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
+            </div>
             </div>
         </div></div>
             )
@@ -402,7 +413,7 @@ const art3 =(check3)=>{
         }
         else {
             add = (
-                <div className="bg-blue-300 h-[620px] w-80  ml-11 rounded-xl grid grid-cols-1 place-content-center shadow-2xl ">
+                <div className="bg-blue-300 h-16   w-16  ml-11 rounded-xl grid grid-cols-1 place-content-center shadow-2xl ">
                 <div className="flex justify-center ">
                 <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
                 </div>
@@ -451,9 +462,9 @@ const art3 =(check3)=>{
         <form method="post">
         
         <div className="flex justify-center">
-        <div className="bg-blue-300 grid grid-flow rounded-xl shadow-2xl ">
+        <div className="bg-blue-300 grid grid-flow rounded-xl shadow-2xl pb-2 ml-3 ">
         
-        <div className="grid grid-rows-1">
+        <div className="grid grid-rows-1 mt-4">
             <div className="grid grid-cols-2 mx-4 mt-3 ">
               <div className="mr-3">
             <input type="text" onChange={(e) => setinitial_loan(e.target.value)} value={datainitial_loan} name="initial_loan" placeholder="ยอดเงินกู้" className=" text-center mr-2 mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  "/>
@@ -500,7 +511,7 @@ const art3 =(check3)=>{
                     </div>
                     
                     
-            <div className="grid grid-cols-1 mt-3 ml-3 ">
+            <div className="grid grid-cols-1 mt-3 ml-3  ">
                 
                 <button type="reset" onClick={handReset} class="mr-4 text-white   bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  ">reset</button>
             </div>
@@ -517,7 +528,9 @@ const art3 =(check3)=>{
         
         
         </form>
+        <div className="grid items-center"  >
         {Addcomponnent2(dataCount)}
+        </div>
         <dialog id="my_modal_1" className="modal">
   <div className="modal-box min-w-fit">
     <form method="dialog">

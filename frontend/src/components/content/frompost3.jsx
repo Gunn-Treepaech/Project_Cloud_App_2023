@@ -154,7 +154,7 @@ function Frompots3({ sendDataToParent , value ,checkcount,count,payment}){
     conta = (
       <div className="grid grid-cols-2 mx-4">
       <div className="mr-3">
-    <input placeholder="MRR -" onChange={(e) => setchang_interest2(e.target.value)}  name="chang_interest" value={datachang_interest2} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+    <input placeholder="MRR -" onChange={(e) => setchang_interest(e.target.value)}  name="chang_interest" value={datachang_interest} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
     </div>
     <div>
     <input value="ปีที่ 3" disabled  className="bg-white text-center mb-2 text-black    border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
@@ -212,8 +212,8 @@ function Frompots3({ sendDataToParent , value ,checkcount,count,payment}){
         <div className=" flex justify-start max-w-screen-xl mx-auto  ">
         </div>
         <div className="flex justify-center">
-        <div className="bg-blue-300 grid grid-flow rounded-xl mx-3">
-        <div className="flex justify-end mr-2"><button onClick={check3}><FontAwesomeIcon icon={faXmark} size="2xl"/></button></div>
+        <div className="bg-blue-300 grid grid-flow rounded-xl mx-3 pb">
+        <div className="flex justify-end mr-5 mt-4"><button onClick={check3}><FontAwesomeIcon icon={faXmark} size="2xl"/></button></div>
         <div className="grid grid-rows-1">
         <div className="grid grid-cols-2 mx-4 mt-3 ">
               <div className="mr-3">
