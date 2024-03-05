@@ -11,7 +11,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   //
    useEffect(() => {
-      fetch('http://192.168.31.129:5000/showdatadb')
+      fetch('/api/showdatadb')
          .then((response) => response.json())
          .then((data) => {
             setPosts(data);

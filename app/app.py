@@ -21,7 +21,7 @@ config = {
 def home():
     return 'Calculate Loan Schedule Program'
 
-@app.route('/calculate', methods=['POST'])
+@app.route('/api/calculate', methods=['POST'])
 def calculate():
     global result_data
     result_data = {}
@@ -29,17 +29,17 @@ def calculate():
     calculate_loan_schedule(**datas)
     return jsonify(result_data)
 
-@app.route('/showdatadb', methods=['GET'])
+@app.route('/api/showdatadb', methods=['GET'])
 def showdatadb():
     return jsonify(getdatadb())
 
-@app.route('/inserdata', methods=['POST'])
+@app.route('/api/inserdata', methods=['POST'])
 def insertdatadb():
     datas = request.json
     insert_or_update_data(**datas)
     return jsonify(getdatadb())
 
-@app.route('/addcolumn', methods=['POST'])
+@app.route('/api/addcolumn', methods=['POST'])
 def addcolumn():
     datas = request.json
     add_column(**datas)
