@@ -145,24 +145,34 @@ function Frompots2({ sendDataToParent , value,checkcount,count,payment}){
    let conta 
    if(dataY == "1"){
     conta = (
-                    <div className="grid grid-cols-2 mx-4">
-                    
-                    <input placeholder="MRR -" name="chang_interest" onChange={(e) => setchang_interest(e.target.value)} value={datachang_interest} className="text-center mr-2 mb-2" type="text" />
-                    <input placeholder="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black"  type="text" />
-                    
-                    
-                    <input className="text-center mr-2 mb-2" name="chang_interest2" onChange={(e) => setchang_interest2(e.target.value)} value={datachang_interest2} placeholder="MRR -"  type="text" />
-                    <input className="bg-white text-center mb-2" disabled placeholder="ปีที่ 3" type="text" />
-                    
-                    </div>
+      <div className="grid grid-cols-2 mx-4">
+      <div className="mr-3">
+      <input placeholder="MRR -" name="chang_interest" onChange={(e) => setchang_interest(e.target.value)} value={datachang_interest} className="text-center mr-2 mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+      </div>
+    <div>
+    <input value="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black  text-bold border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
+    </div>
+    <div className="mr-3">
+    <input className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" name="chang_interest2" onChange={(e) => setchang_interest2(e.target.value)} value={datachang_interest2} placeholder="MRR -"  type="text" />
+    
+    </div>
+    <div>
+    <input className="bg-white text-center mb-2   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " disabled value="ปีที่ 3" type="text" />
+    
+    </div>
+    </div>
     ) 
   }
   else if (dataY == "2"){
     conta = (
-        <div className="grid grid-cols-2 mx-4">
-        <input placeholder="MRR -" onChange={(e) => setchang_interest(e.target.value)}  name="chang_interest" value={datachang_interest} className="text-center mr-2 mb-2" type="text" />
-        <input placeholder="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black"  type="text" />
-        </div>
+      <div className="grid grid-cols-2 mx-4">
+      <div className="mr-3">
+    <input placeholder="MRR -" onChange={(e) => setchang_interest2(e.target.value)}  name="chang_interest" value={datachang_interest2} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+    </div>
+    <div>
+    <input value="ปีที่ 3" disabled  className="bg-white text-center mb-2 text-black    border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
+    </div>
+    </div>
     )
   }
   else if (dataY == "3"){
@@ -200,39 +210,53 @@ function Frompots2({ sendDataToParent , value,checkcount,count,payment}){
         <div className=" flex justify-start max-w-screen-xl mx-auto  ">
         </div>
         <div className="flex justify-center">
-        <div className="bg-blue-500 grid grid-flow rounded-xl mx-3">
+        <div className="bg-blue-300 grid grid-flow rounded-xl mx-3">
         <div className="flex justify-end mr-2"><button onClick={check2}><FontAwesomeIcon icon={faXmark} size="2xl"/></button></div>
         <div className="grid grid-rows-1">
-            <div className="grid grid-cols-2 mx-4 mt-3">
+        <div className="grid grid-cols-2 mx-4 mt-3 ">
+              <div className="mr-3">
+           
             
-            <select name="bank" id="" onChange={handleSelectChange}  className="text-center mr-2" >
+            <select name="bank" id="" onChange={handleSelectChange}  className="text-center mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " >
+              
                 {dataname.map((item)=>{
                     return <Bank data={item} />
                 })}
             </select>
-            <input type="text"  name="MRR" onChange={(e) => setSelectedOption(e.target.value)}  className="text-center" placeholder="MRR" value={selectedOption} />
             </div>
-            <h1 className="text-center">วันที่</h1>
+            <div>
+            <input type="text"  name="MRR" onChange={(e) => setSelectedOption(e.target.value)}  className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " placeholder="MRR" value={selectedOption} />
+            </div>
+            </div>
+            <h1 className="text-center">ข้อมูลอัพเดทวันที่</h1>
             <h1 className="text-center text-white ">{dataDate}</h1>
             <div className="grid grid-cols-2 mx-4 mb-1 ">
-                <input className="mr-2 mb-2 text-center" name="fixed_interest" value={datafixed_interest} onChange={(e) => setfixed_interest(e.target.value)} placeholder="อัตราดอกเบี้ย" type="text"  id="" />
-                <select onChange={handleSelectChangeY}  className="mb-2 text-center" name="fixed_year" id="">
-                    <option value="1">คงที่ปีที่1</option>
-                    <option value="2">ปีที่2</option>
-                    <option value="3">ปีที่3</option>
-                </select>
-               
+              <div className="mr-3">
+                <input className="mr-2 mb-2 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " name="fixed_interest" value={datafixed_interest} onChange={(e) => setfixed_interest(e.target.value)} placeholder="อัตราดอกเบี้ย" type="text"  id="" />
                 
-            </div>  
+                </div>
+    
+                <div>
+                <select onChange={handleSelectChangeY}  className="mb-2 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " name="fixed_year" id="">
+                    <option value="1">คงที่ปีที่ 1</option>
+                    <option value="2">ปีที่ 2</option>
+                    <option value="3">ปีที่ 3</option>
+                </select>
+                </div>
+                </div>
                    
                     {checkY(dataY)}
                     <div className="grid grid-cols-2 mx-4 mt-1">
-                    <input className="text-center mr-2" onChange={(e) => setstart_month(e.target.value)} name="start_month" value={datastart_month}  placeholder="เดือนที่เริ่ม" type="text" />
-                    <input className="text-center" onChange={(e) => setstart_year(e.target.value)} name="start_year" value={datasstart_year} placeholder="ปีเริ่ม" type="text" />
+                      <div className="mr-4">
+                    <input className="text-center mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" onChange={(e) => setstart_month(e.target.value)} name="start_month" value={datastart_month}  placeholder="เดือนที่เริ่ม" type="text" />
+                    </div>
+                    <div>
+                    <input className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" onChange={(e) => setstart_year(e.target.value)} name="start_year" value={datasstart_year} placeholder="ปีเริ่ม" type="text" />
+                    </div>
                     </div>
                     
                     
-                    <div className="grid grid-cols-1 ml-4 mt-4">
+           <div className="grid grid-cols-1 ml-4 mt-4">
            <button onClick={handReset} type="reset" class="mr-4 text-white mr  bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">reset</button>
            </div>
             
@@ -260,12 +284,12 @@ function Frompots2({ sendDataToParent , value,checkcount,count,payment}){
     {/* head */}
     <thead>
       <tr>
-        <th>ปีที่</th>
-        <th>เดือน</th>
-        <th>ยอดเงินทั้งหมด</th>
-        <th>จ่ายดอกเบี้ย</th>
-        <th>จ่ายเงินกู้</th>
-        <th>ยอดคงเหลือ</th>
+        <th className="text-center">ปีที่</th>
+        <th className="text-center">เดือน</th>
+        <th className="text-center">ยอดเงินทั้งหมด</th>
+        <th className="text-center">จ่ายดอกเบี้ย</th>
+        <th className="text-center">จ่ายเงินกู้</th>
+        <th className="text-center">ยอดคงเหลือ</th>
         
       </tr>
     </thead>

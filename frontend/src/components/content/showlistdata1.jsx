@@ -35,13 +35,28 @@ function Showlist1(props){
         <tbody>
         {tii.map((item, index) => (
           <tr key={index}>
-            <td>{item.year}</td>
-            <td>{item.month}</td>
-            <td>{datapaymet}</td>
-            <td>{item.interest}</td>
-            <td>{item.balance}</td>
-            <td>{item.overpayment}</td>
-            <td>{item.remaining}</td>
+            <td className="text-center">{item.year}</td>
+            <td className="text-center">{item.month}</td>
+            <td className="text-center">{Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+}).format(datapaymet)}</td>
+            <td className="text-center">{Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+}).format(item.interest.toFixed(2))}</td>
+            <td className="text-center">{Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+}).format(item.balance.toFixed(2))}</td>
+            <td className="text-center">{Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+}).format(item.overpayment.toFixed(2))}</td>
+            <td className="text-center">{Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+}).format(item.remaining)}</td>
           </tr>
         ))}
           </tbody>

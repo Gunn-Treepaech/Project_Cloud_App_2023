@@ -45,18 +45,18 @@ function Showdata(props){
     //console.log("2546",databank);
     return (
                  <div className="grid grid-cols-1 mx-5  mb-3   ">
-                    <label className="text-center" htmlFor="">จ่ายยอดเงินกู้</label>
-                <input type="text" className="text-center my-2" placeholder="asda" value={Intl.NumberFormat('th-TH', {
+                    <label className="" htmlFor="">จ่ายยอดเงินกู้</label>
+                <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " disabled value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
 }).format(Math.ceil(databla))}  />
-                <label className="text-center" htmlFor="">จ่ายดอกเบี้ย</label>
-                <input type="text" className="text-center my-2" placeholder="asda" value={Intl.NumberFormat('th-TH', {
+                <label className="" htmlFor="">จ่ายดอกเบี้ย</label>
+                <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" disabled placeholder="asda" value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
 }).format(Math.ceil(dataint))}  />
-               <label className="text-center" htmlFor="">ยอดเงินกู้คงเหลือ</label>
-                 <input type="text" className="text-center my-2" placeholder="asda" value={Intl.NumberFormat('th-TH', {
+               <label className="" htmlFor="">ยอดเงินกู้คงเหลือ</label>
+                 <input type="text" className="text-center my-2 bg-white   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" disabled placeholder="asda" value={Intl.NumberFormat('th-TH', {
   style: 'currency',
   currency: 'THB',
 }).format(Math.ceil(dataremai))} />

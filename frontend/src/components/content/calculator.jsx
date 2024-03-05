@@ -75,7 +75,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://localhost:5000/calculate", frome1)
+                axios.post("http://192.168.31.129:5000/calculate", frome1)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone1(respons);
@@ -106,7 +106,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://localhost:5000/calculate", frome2)
+                axios.post("http://192.168.31.129:5000/calculate", frome2)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone2(respons);
@@ -137,7 +137,7 @@ function Calcultor(){
             data.bank
           ) {
             try {
-                axios.post("http://localhost:5000/calculate", frome3)
+                axios.post("http://192.168.31.129:5000/calculate", frome3)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone3(respons);
@@ -170,7 +170,7 @@ function Calcultor(){
           ) {
             
             try {
-                axios.post("http://localhost:5000/calculate", data)
+                axios.post("http://192.168.31.129:5000/calculate", data)
                   .then((respons) => {
                     console.log("tenfrom1", respons);
                     setrespone(respons);
@@ -291,22 +291,32 @@ function Calcultor(){
    if(dataY == "1"){
     conta = (
                     <div className="grid grid-cols-2 mx-4">
+                      <div className="mr-3">
+                      <input placeholder="MRR -" name="chang_interest" onChange={(e) => setchang_interest(e.target.value)} value={datachang_interest} className="text-center mr-2 mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+                      </div>
+                    <div>
+                    <input value="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black  text-bold border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
+                    </div>
+                    <div className="mr-3">
+                    <input className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" name="chang_interest2" onChange={(e) => setchang_interest2(e.target.value)} value={datachang_interest2} placeholder="MRR -"  type="text" />
                     
-                    <input placeholder="MRR -" name="chang_interest" onChange={(e) => setchang_interest(e.target.value)} value={datachang_interest} className="text-center mr-2 mb-2" type="text" />
-                    <input placeholder="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black"  type="text" />
+                    </div>
+                    <div>
+                    <input className="bg-white text-center mb-2   border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " disabled value="ปีที่ 3" type="text" />
                     
-                    
-                    <input className="text-center mr-2 mb-2" name="chang_interest2" onChange={(e) => setchang_interest2(e.target.value)} value={datachang_interest2} placeholder="MRR -"  type="text" />
-                    <input className="bg-white text-center mb-2" disabled placeholder="ปีที่ 3" type="text" />
-                    
+                    </div>
                     </div>
     ) 
   }
   else if (dataY == "2"){
     conta = (
         <div className="grid grid-cols-2 mx-4">
-        <input placeholder="MRR -" onChange={(e) => setchang_interest(e.target.value)}  name="chang_interest" value={datachang_interest} className="text-center mr-2 mb-2" type="text" />
-        <input placeholder="ปีที่ 2" disabled  className="bg-white text-center mb-2 text-black"  type="text" />
+          <div className="mr-3">
+        <input placeholder="MRR -" onChange={(e) => setchang_interest2(e.target.value)}  name="chang_interest" value={datachang_interest2} className="text-center mr-2 mb-2 bg-white    border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " type="text" />
+        </div>
+        <div>
+        <input value="ปีที่ 3" disabled  className="bg-white text-center mb-2 text-black    border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 "  type="text" />
+        </div>
         </div>
     )
   }
@@ -368,7 +378,7 @@ const art3 =(check3)=>{
         let add 
         if (dataCount == 1){
             add = (<div className="flex"><Frompots sendDataToParent={tii} checkcount={art} count={dataCount} payment={datamonthly_payment} value={datarespone1} />
-            <div className="bg-blue-500 h-96 w-80  ml-11 rounded-xl grid grid-cols-1 place-content-center  ">
+            <div className="bg-blue-300 h-[620px] w-80  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center  shadow-2xl ">
             <div className="flex justify-center ">
             <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
             </div>
@@ -377,8 +387,8 @@ const art3 =(check3)=>{
             )
         }
         else if (dataCount == 2){
-            add = (<div className="flex"><Frompots sendDataToParent={tii} value={datarespone1} payment={datamonthly_payment} checkcount={art2} count={dataCount}/> <Frompots2 sendDataToParent={tii2} value={datarespone2} payment={datamonthly_payment} checkcount={art2} count={dataCount}/>
-            <div className="bg-blue-500 h-96 w-80  ml-11 rounded-xl grid grid-cols-1 place-content-center  ">
+            add = (<div className="flex"><Frompots sendDataToParent={tii} value={datarespone1} payment={datamonthly_payment} checkcount={art} count={dataCount}/> <Frompots2 sendDataToParent={tii2} value={datarespone2} payment={datamonthly_payment} checkcount={art2} count={dataCount}/>
+            <div className="bg-blue-300 h-[620px] w-80  ml-1 mr-3 rounded-xl grid grid-cols-1 place-content-center shadow-2xl  ">
             <div className="flex justify-center ">
             <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
             </div>
@@ -386,13 +396,13 @@ const art3 =(check3)=>{
             )
         }
         else if (dataCount == 3){
-            add = (<div className="flex"><Frompots sendDataToParent={tii} value={datarespone1} checkcount={art3} payment={datamonthly_payment} count={dataCount}/> <Frompots2 sendDataToParent={tii3} value={datarespone2} checkcount={art3} payment={datamonthly_payment} count={dataCount}/> <Frompots3 sendDataToParent={tii3} value={datarespone3} payment={datamonthly_payment} checkcount={art3} count={dataCount}/>
+            add = (<div className="flex"><Frompots sendDataToParent={tii} value={datarespone1} checkcount={art} payment={datamonthly_payment} count={dataCount}/> <Frompots2 sendDataToParent={tii2} value={datarespone2} checkcount={art2} payment={datamonthly_payment} count={dataCount}/> <Frompots3 sendDataToParent={tii3} value={datarespone3} payment={datamonthly_payment} checkcount={art3} count={dataCount}/>
             </div>
             )
         }
         else {
             add = (
-                <div className="bg-blue-500 h-96 w-80  ml-11 rounded-xl grid grid-cols-1 place-content-center  ">
+                <div className="bg-blue-300 h-[620px] w-80  ml-11 rounded-xl grid grid-cols-1 place-content-center shadow-2xl ">
                 <div className="flex justify-center ">
                 <button onClick={() => setdataCount(dataCount + 1)}><FontAwesomeIcon icon={faPlus} size="2xl"/></button>
                 </div>
@@ -430,48 +440,69 @@ const art3 =(check3)=>{
     setPopupOpen(true)};
   const closePopup = () => setPopupOpen(false);
 
+
+
+  
+
     return (
-       
-        <section id="calculator" data-theme="cupcake" className="flex justify-center min-h-svh  pt-16 snap-end "> 
+        
+        <section id="calculator" data-theme="cupcake" className=" min-h-svh  pt-16 snap-end "> 
+        <div className="flex justify-center" >
         <form method="post">
         
         <div className="flex justify-center">
-        <div className="bg-blue-500 grid grid-flow rounded-xl mx-3">
-          
+        <div className="bg-blue-300 grid grid-flow rounded-xl shadow-2xl ">
+        
         <div className="grid grid-rows-1">
-            <div className="grid grid-cols-2 mx-4 mt-3">
-            <input type="text" onChange={(e) => setinitial_loan(e.target.value)} value={datainitial_loan} name="initial_loan" placeholder="ยอดเงินกู้" className=" text-center mr-2 mb-2"/>
-            <input type="text" onChange={(e) => setmonthly_payment(e.target.value)} value={datamonthly_payment} name="monthly_payment" placeholder="ยอดผ่อนต่อเดือน" className="  text-center mb-2"/>
-            <select name="bank" id="" onChange={handleSelectChange}  className="text-center mr-2" >
+            <div className="grid grid-cols-2 mx-4 mt-3 ">
+              <div className="mr-3">
+            <input type="text" onChange={(e) => setinitial_loan(e.target.value)} value={datainitial_loan} name="initial_loan" placeholder="ยอดเงินกู้" className=" text-center mr-2 mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  "/>
+            
+            <select name="bank" id="" onChange={handleSelectChange}  className="text-center mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " >
+              
                 {dataname.map((item)=>{
                     return <Bank data={item} />
                 })}
             </select>
-            <input type="text"  name="MRR" onChange={(e) => setSelectedOption(e.target.value)}  className="text-center" placeholder="MRR" value={selectedOption} />
             </div>
-            <h1 className="text-center">วันที่</h1>
+            <div>
+            <input type="text" onChange={(e) => setmonthly_payment(e.target.value)} value={datamonthly_payment} name="monthly_payment" placeholder="ยอดผ่อนต่อเดือน" className="  text-center mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  "/>
+            <input type="text"  name="MRR" onChange={(e) => setSelectedOption(e.target.value)}  className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " placeholder="MRR" value={selectedOption} />
+            </div>
+            </div>
+            <h1 className="text-center">ข้อมูลอัพเดทวันที่</h1>
             <h1 className="text-center text-white ">{dataDate}</h1>
             <div className="grid grid-cols-2 mx-4 mb-1 ">
-                <input className="mr-2 mb-2 text-center" name="fixed_interest" value={datafixed_interest} onChange={(e) => setfixed_interest(e.target.value)} placeholder="อัตราดอกเบี้ย" type="text"  id="" />
-                <select onChange={handleSelectChangeY}  className="mb-2 text-center" name="fixed_year" id="">
-                    <option value="1">คงที่ปีที่1</option>
-                    <option value="2">ปีที่2</option>
-                    <option value="3">ปีที่3</option>
+              <div className="mr-3">
+                <input className="mr-2 mb-2 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 " name="fixed_interest" value={datafixed_interest} onChange={(e) => setfixed_interest(e.target.value)} placeholder="อัตราดอกเบี้ย" type="text"  id="" />
+                
+                </div>
+    
+                <div>
+                <select onChange={handleSelectChangeY}  className="mb-2 text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1  " name="fixed_year" id="">
+                    <option value="1">คงที่ปีที่ 1</option>
+                    <option value="2">ปีที่ 2</option>
+                    <option value="3">ปีที่ 3</option>
                 </select>
+                </div>
                
                 
             </div>  
                    
                     {checkY(dataY)}
                     <div className="grid grid-cols-2 mx-4 mt-1">
-                    <input className="text-center mr-2" onChange={(e) => setstart_month(e.target.value)} name="start_month" value={datastart_month}  placeholder="เดือนที่เริ่ม" type="text" />
-                    <input className="text-center" onChange={(e) => setstart_year(e.target.value)} name="start_year" value={datasstart_year} placeholder="ปีเริ่ม" type="text" />
+                      <div className="mr-4">
+                    <input className="text-center mr-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" onChange={(e) => setstart_month(e.target.value)} name="start_month" value={datastart_month}  placeholder="เดือนที่เริ่ม" type="text" />
+                    </div>
+                    <div>
+                    <input className="text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1" onChange={(e) => setstart_year(e.target.value)} name="start_year" value={datasstart_year} placeholder="ปีเริ่ม" type="text" />
+                    </div>
                     </div>
                     
                     
-            <div className="grid grid-cols-2 mt-3 ">
-                <button type="submit" onClick={handleSubmit} class="ml-4   text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">คำนวน</button>
-                <button type="reset" onClick={handReset} class="mr-4 text-white mr  bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">reset</button>
+            <div className="grid grid-cols-1 mt-3 ml-3 ">
+                
+                <button type="reset" onClick={handReset} class="mr-4 text-white   bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2  ">reset</button>
             </div>
             
         </div>
@@ -491,6 +522,7 @@ const art3 =(check3)=>{
   <div className="modal-box min-w-fit">
     <form method="dialog">
       {/* if there is a button in form, it will close the modal */}
+      
       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
     </form>
     <div className="overflow-x-auto">
@@ -515,6 +547,9 @@ const art3 =(check3)=>{
 </div>
   </div>
 </dialog>
+</div>
+        
+        <div className="flex justify-center mt-7"><button type="submit" onClick={handleSubmit} class="ml-4  w-60   text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg  px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 text-2xl">คำนวน</button></div>
         </section>
         
        

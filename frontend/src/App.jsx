@@ -11,7 +11,7 @@ function App() {
   const [posts, setPosts] = useState([]);
   //
    useEffect(() => {
-      fetch('http://localhost:5000/showdatadb')
+      fetch('http://192.168.31.129:5000/showdatadb')
          .then((response) => response.json())
          .then((data) => {
             setPosts(data);
@@ -21,7 +21,7 @@ function App() {
    console.log("ter",posts);
   return (
   
-  <>
+  <html>
   <DataContext.Provider value={posts} key={uuidv4()} >
     
   <div className="snap-mandatory overflow-auto snap-y ">
@@ -31,7 +31,7 @@ function App() {
   
  
   </DataContext.Provider>
-  </>
+  </html>
   );
 
 }
