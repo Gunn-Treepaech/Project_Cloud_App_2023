@@ -1,17 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import mysql.connector
-from mysql.connector import Error
-import json
-from datetime import date, timedelta
-from decimal import Decimal, getcontext, ROUND_HALF_UP
+from database_manager import DatabaseManager
+from loan_calculator import LoanCalculator
+import re
 
+# สร้าง Flask app และเปิดใช้งาน CORS เพื่อให้ frontend สามารถเรียก API ได้
 app = Flask(__name__)
 CORS(app)
 
-getcontext().prec = 28 # กำหนดความแม่นยำของ Decimal
-
-# ---------------------------------------------------------------
+# กำหนดค่าการเชื่อมต่อฐานข้อมูล MySQL
 config = {
     'user': 'root',
     'password': '1234',
@@ -19,269 +16,57 @@ config = {
     'port': '3306',
     'database': 'financial_data'
 }
-# ---------------------------------------------------------------
-
-def get_db_connection():
-    """สร้างและคืนค่าการเชื่อมต่อฐานข้อมูล"""
-    try:
-        connection = mysql.connector.connect(**config)
-        return connection
-    except Error as e:
-        print(f"Error connecting to MySQL: {e}")
-        return None
-
-def execute_db_query(query, params=None, fetch=False, fetch_one=False):
-    """ฟังก์ชันรวมสำหรับการ Execute Query อย่างปลอดภัย"""
-    connection = get_db_connection()
-    if connection is None:
-        return "Database Connection Error" if fetch else False
-
-    cursor = connection.cursor(dictionary=True if fetch else None)
-    try:
-        if params:
-            cursor.execute(query, params)
-        else:
-            cursor.execute(query)
-
-        if fetch:
-            return cursor.fetchone() if fetch_one else cursor.fetchall()
-        
-        connection.commit()
-        return True
-    except Error as e:
-        print(f"Database Query Error: {e}")
-        return str(e) if fetch else False
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-
-# ---------------------------------------------------------------
+# สร้าง instance ของ DatabaseManager สำหรับจัดการคำสั่ง SQL
+db_manager = DatabaseManager(config)
 
 @app.route('/', methods=['GET'])
 def home():
+    # แสดงข้อความหน้าแรกของ API
     return 'Calculate Loan Schedule Program'
 
 @app.route('/api/calculate', methods=['POST'])
 def calculate():
+    # รับข้อมูล JSON จาก client สำหรับคำนวณตารางผ่อน
     datas = request.json
-    result_data = calculate_loan_schedule(**datas) 
+    # สร้าง LoanCalculator และคำนวณตารางผ่อน
+    result_data = LoanCalculator(datas).calculate_schedule()
+    # ถ้ามี error ในการคำนวณ ส่ง error กลับ
     if isinstance(result_data, str) and result_data.startswith("Error"):
         return jsonify({"error": result_data}), 500
+    # ส่งผลลัพธ์ตารางผ่อนกลับในรูปแบบ JSON
     return jsonify(result_data)
 
 @app.route('/api/showdatadb', methods=['GET'])
 def showdatadb():
-    results = getdatadb()
+    # ดึงข้อมูลอัตราดอกเบี้ยทั้งหมดจากฐานข้อมูล
+    results = db_manager.execute_query('SELECT * FROM interest_rates;', fetch=True)
+    # ถ้าเกิด error ในการดึงข้อมูล ส่ง error กลับ
     if isinstance(results, str):
         return jsonify({"error": results}), 500
+    # ส่งข้อมูลอัตราดอกเบี้ยทั้งหมดกลับ
     return jsonify(results)
 
 @app.route('/api/insertdata', methods=['POST'])
 def insertdatadb():
+    # รับข้อมูล JSON สำหรับเพิ่มหรืออัปเดตข้อมูลอัตราดอกเบี้ย
     datas = request.json
-    result = insert_or_update_data(**datas)
-    if result is not True:
-        return jsonify({"error": result}), 500
-    
-    results = getdatadb()
-    if isinstance(results, str):
-        return jsonify({"error": results}), 500
-    return jsonify(results)
-
-@app.route('/api/addcolumn', methods=['POST'])
-def addcolumn_safe():
-    datas = request.json
-    result = add_column_safe(**datas)
-    if result is not True:
-        return jsonify({"error": result}), 500
-
-    results = getdatadb()
-    if isinstance(results, str):
-        return jsonify({"error": results}), 500
-    return jsonify(results)
-
-@app.route('/api/bank-info', methods=['GET'])
-def bank_info():
-    bank_name = request.args.get('bank')
-    if not bank_name:
-        return jsonify({"error": "Missing bank parameter"}), 400
-
-    # แมปชื่อธนาคารภาษาไทยกับชื่อใน database
-    bank_map = {
-        'ธนาคารกสิกรไทย': 'Kbank',
-        'ธนาคารไทยพาณิชย์': 'SCB',
-        'ธนาคารกรุงไทย': 'KTB',
-        'ธนาคารยูโอบี': 'UOB'
-    }
-    db_bank_name = bank_map.get(bank_name, bank_name)
-
-    query = "SELECT MRR, years_interest, update_MRR FROM interest_rates WHERE bank_name = %s"
-    result = execute_db_query(query, (db_bank_name,), fetch=True, fetch_one=True)
-    if not result:
-        return jsonify({"error": "Bank not found"}), 404
-
-    # คืนค่า fixed_interest จาก years_interest
-    return jsonify({
-        "MRR": result.get("MRR"),
-        "fixed_interest": result.get("years_interest"),
-        "update_MRR": result.get("update_MRR")
-    })
-
-def days_in_month(month, year):
-    """คืนค่าจำนวนวันในเดือน/ปีที่ระบุ"""
-    if month == 12:
-        next_month = 1
-        next_year = year + 1
-    else:
-        next_month = month + 1
-        next_year = year
-        
-    try:
-        # วันที่ 1 ของเดือนถัดไป ลบด้วย 1 วัน คือวันสุดท้ายของเดือนปัจจุบัน
-        return (date(next_year, next_month, 1) - timedelta(days=1)).day
-    except ValueError:
-        return 30
-
-def calculate_loan_schedule(**datas):
-    result_data_local = {}
-    # ------------------------------------------------------------
-    # รับข้อมูล
-    # ------------------------------------------------------------
-    start_month = datas.get('start_month')
-    current_year = datas.get('start_year')
-
-    remaining_principal = Decimal(str(datas.get('initial_loan')))
-    fixed_interest = Decimal(str(datas.get('fixed_interest')))  # 2.85 → frontend ส่ง 0.0285
-    fixed_year = datas.get('fixed_year')
-    MRR = Decimal(str(datas.get('MRR')))                        # 8.88 → frontend ส่ง 0.088
-    monthly_payment = Decimal(str(datas.get('monthly_payment')))
-    chang_interest = [Decimal(str(i)) for i in datas.get('chang_interest', [])]
-    bank = datas.get('bank')
-
-    if any(v is None for v in [start_month, current_year, remaining_principal,
-                               fixed_interest, MRR, monthly_payment, bank]):
-        return "Error: Missing required calculation parameters."
-    # ------------------------------------------------------------
-    # Helper: แปลงทศนิยม → เปอร์เซ็นต์
-    # ------------------------------------------------------------
-    def normalize_rate(r: Decimal) -> Decimal:
-        # frontend ส่ง 0.0285 → backend ต้องใช้ 2.85
-        return (r * Decimal('100')) if r < Decimal('1') else r
-
-    # อัตราเริ่มต้น
-    fixed_interest = normalize_rate(fixed_interest)
-
-    current_month = start_month
-    current_period = 0
-    total_periods = 36
-
-    TWO_PLACES = Decimal('0.01')
-
-    for period in range(1, total_periods + 1):
-        current_period += 1
-        display_month = current_month
-        # ------------------------------------------------------------
-        # จำนวนวันในเดือน
-        # ------------------------------------------------------------
-        until_the_day = days_in_month(display_month, current_year)
-        # ------------------------------------------------------------
-        # เปลี่ยนอัตราดอกเบี้ยตามปีที่กำหนด
-        # ------------------------------------------------------------
-        # fixed_year = 2 → ปี 1–2 fixed | ปี 3 MRR - discount1
-        if fixed_year == 2:
-            if current_period == 25:
-                new_rate = MRR - chang_interest[0]
-                fixed_interest = normalize_rate(new_rate)
-
-        # fixed_year = 1 → ปี 1 fixed | ปี 2 MRR - disc1 | ปี 3 MRR - disc2
-        elif fixed_year == 1:
-            if current_period == 13:
-                new_rate = MRR - chang_interest[0]
-                fixed_interest = normalize_rate(new_rate)
-
-            elif current_period == 25:
-                if len(chang_interest) > 1:
-                    new_rate = MRR - chang_interest[1]
-                else:
-                    new_rate = MRR
-                fixed_interest = normalize_rate(new_rate)
-        # หาก fixed_year = 0 หรือ None: ไม่เปลี่ยนอะไร
-        # ------------------------------------------------------------
-        # จบถ้าจ่ายหมด
-        # ------------------------------------------------------------
-        if remaining_principal <= 0:
-            break
-        # ------------------------------------------------------------
-        # คำนวณดอกเบี้ยต่อเดือน ด้วย Decimal
-        # สูตร: principal * (rate%) / 365 * days
-        # ------------------------------------------------------------
-        interest_per_day = (remaining_principal * fixed_interest) / Decimal('36500')
-        interest_money = interest_per_day * Decimal(until_the_day)
-        # ------------------------------------------------------------
-        # เงินต้นที่ตัดได้
-        # ------------------------------------------------------------
-        balance = monthly_payment - interest_money
-
-        if balance <= 0:
-            balance = Decimal('0')
-        # คงเหลือ
-        if remaining_principal - balance <= 0:
-            overpayment = balance - remaining_principal
-            balance = remaining_principal
-            remaining_principal = Decimal('0')
-        else:
-            overpayment = Decimal('0')
-            remaining_principal -= balance
-        # ------------------------------------------------------------
-        # ปัดเฉพาะค่าแสดงผล
-        # ------------------------------------------------------------
-        result = {
-            "month": display_month,
-            "year": current_year,
-            "remaining": float(remaining_principal.quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
-            "interest": float(interest_money.quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
-            "balance": float(balance.quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
-            "overpayment": float(overpayment.quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
-            "interest_rate": float(fixed_interest)
-        }
-        if bank not in result_data_local:
-            result_data_local[bank] = []
-        result_data_local[bank].append(result)
-        # ------------------------------------------------------------
-        # เดือนถัดไป
-        # ------------------------------------------------------------
-        current_month += 1
-        if current_month > 12:
-            current_month = 1
-            current_year += 1
-
-    return result_data_local
-# ---------------------------------------------------------------
-# Database Logic (Security Fixes)
-# ---------------------------------------------------------------
-
-def getdatadb():
-    """ดึงข้อมูลอัตราดอกเบี้ยทั้งหมด"""
-    query = 'SELECT * FROM interest_rates;'
-    return execute_db_query(query, fetch=True)
-
-def insert_or_update_data(**datas):
     bank_name = datas.get('bank_name')
     update_MRR = datas.get('update_MRR')
     years_interest = datas.get('years_interest')
     MRR = datas.get('MRR')
 
+    # ตรวจสอบว่ามี bank_name หรือไม่
     if not bank_name:
-        return "Error: bank_name is required."
+        return jsonify({"error": "bank_name is required."}), 400
 
+    # ตรวจสอบว่ามีข้อมูลธนาคารนี้อยู่แล้วหรือไม่
     query_check = "SELECT * FROM interest_rates WHERE bank_name = %s"
-    existing_data = execute_db_query(query_check, (bank_name,), fetch=True, fetch_one=True)
+    existing_data = db_manager.execute_query(query_check, (bank_name,), fetch=True, fetch_one=True)
 
     if existing_data:
+        # ถ้ามีข้อมูลอยู่แล้ว ให้เตรียมคำสั่ง UPDATE เฉพาะ field ที่มีการส่งมา
         update_values = []
         params = []
-        
         if update_MRR is not None:
             update_values.append("update_MRR = %s")
             params.append(update_MRR)
@@ -291,29 +76,82 @@ def insert_or_update_data(**datas):
         if MRR is not None:
             update_values.append("MRR = %s")
             params.append(MRR)
-            
+        # ถ้าไม่มี field ใดเปลี่ยนแปลง ให้คืนค่า True
         if not update_values:
-            return True
-
+            return jsonify(True)
+        # สร้าง query สำหรับ UPDATE
         query_update = f"UPDATE interest_rates SET {', '.join(update_values)} WHERE bank_name = %s"
         params.append(bank_name)
-        
-        return execute_db_query(query_update, tuple(params))
-        
+        result = db_manager.execute_query(query_update, tuple(params))
     else:
+        # ถ้ายังไม่มีข้อมูลธนาคารนี้ ให้ INSERT ข้อมูลใหม่
         query_insert = "INSERT INTO interest_rates (bank_name, update_MRR, years_interest, MRR) VALUES (%s, %s, %s, %s)"
         params = (bank_name, update_MRR, years_interest, MRR)
-        return execute_db_query(query_insert, params)
+        result = db_manager.execute_query(query_insert, params)
 
-def add_column_safe(**datas):
+    # ถ้าเกิด error ในการ INSERT/UPDATE ส่ง error กลับ
+    if result is not True:
+        return jsonify({"error": result}), 500
+
+    # ดึงข้อมูลอัตราดอกเบี้ยล่าสุดกลับไปแสดง
+    results = db_manager.execute_query('SELECT * FROM interest_rates;', fetch=True)
+    if isinstance(results, str):
+        return jsonify({"error": results}), 500
+    return jsonify(results)
+
+@app.route('/api/addcolumn', methods=['POST'])
+def addcolumn_safe():
+    # รับข้อมูล JSON สำหรับเพิ่ม column ในตาราง interest_rates
+    datas = request.json
     column_name = datas.get('column_name')
     data_type = datas.get('data_type')
     valid_data_types = ['VARCHAR(50)', 'INT', 'DECIMAL(5, 2)', 'DATE']
-    
+    # ตรวจสอบความถูกต้องของ column_name และ data_type
     if not column_name or not data_type or data_type.upper() not in [dt.upper() for dt in valid_data_types]:
-        return "Error: Invalid column_name or data_type provided."
+        return jsonify({"error": "Invalid column_name or data_type provided."}), 400
+    # ตรวจสอบรูปแบบ column_name เพื่อป้องกัน SQL injection
+    if not re.match(r'^[A-Za-z_][A-Za-z0-9_]*$', column_name):
+        return jsonify({"error": "Invalid column name."}), 400
+    # สร้าง query สำหรับเพิ่ม column
     query_add_column = f"ALTER TABLE interest_rates ADD COLUMN {column_name} {data_type}"
-    return execute_db_query(query_add_column)
+    result = db_manager.execute_query(query_add_column)
+    # ถ้าเกิด error ในการเพิ่ม column ส่ง error กลับ
+    if result is not True:
+        return jsonify({"error": result}), 500
+    # ดึงข้อมูลอัตราดอกเบี้ยล่าสุดกลับไปแสดง
+    results = db_manager.execute_query('SELECT * FROM interest_rates;', fetch=True)
+    if isinstance(results, str):
+        return jsonify({"error": results}), 500
+    return jsonify(results)
 
+@app.route('/api/bank-info', methods=['GET'])
+def bank_info():
+    # รับ parameter bank จาก query string
+    bank_name = request.args.get('bank')
+    # ตรวจสอบว่ามี bank parameter หรือไม่
+    if not bank_name:
+        return jsonify({"error": "Missing bank parameter"}), 400
+    # แมปชื่อธนาคารภาษาไทยกับชื่อในฐานข้อมูล
+    bank_map = {
+        'ธนาคารกสิกรไทย': 'Kbank',
+        'ธนาคารไทยพาณิชย์': 'SCB',
+        'ธนาคารกรุงไทย': 'KTB',
+        'ธนาคารยูโอบี': 'UOB'
+    }
+    db_bank_name = bank_map.get(bank_name, bank_name)
+    # สร้าง query สำหรับดึงข้อมูลอัตราดอกเบี้ยของธนาคารที่ระบุ
+    query = "SELECT MRR, years_interest, update_MRR FROM interest_rates WHERE bank_name = %s"
+    result = db_manager.execute_query(query, (db_bank_name,), fetch=True, fetch_one=True)
+    # ถ้าไม่พบธนาคาร ส่ง error กลับ
+    if not result:
+        return jsonify({"error": "Bank not found"}), 404
+    # ส่งข้อมูลอัตราดอกเบี้ยของธนาคารกลับ
+    return jsonify({
+        "MRR": result.get("MRR"),
+        "fixed_interest": result.get("years_interest"),
+        "update_MRR": result.get("update_MRR")
+    })
+
+# จุดเริ่มต้นของโปรแกรม Flask
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
