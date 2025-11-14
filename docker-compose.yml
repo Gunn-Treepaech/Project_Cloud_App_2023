@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   app:
-    build: ./app
+  # change version app.
+    build: ./tmp/version1/app
     links:
       - db
     ports:
@@ -22,13 +23,15 @@ services:
     ports:
       - "32000:3306"
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data:/var/lib/mysql
+    # change version db.
+      - ./tmp/version1/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./tmp/version1/data:/var/lib/mysql
     networks:
       - my-custom-network
 
   front:  # Replace with your desired service name
-    build: ./frontend  # Build the image from the current directory (./)
+  # change version front.
+    build: ./tmp/version1/frontend  # Build the image from the current directory (./)
     ports:
       - "5173:5173"  # Map host port 5173 to container port 5173
     command: npm run dev  # Override the default command in the Dockerfile
