@@ -10,9 +10,9 @@ CORS(app)
 
 # กำหนดค่าการเชื่อมต่อฐานข้อมูล MySQL
 config = {
-    'user': 'root',
-    'password': '1234',
-    'host': 'localhost',
+    'user': 'user',
+    'password': 'user',
+    'host': 'db',
     'port': '3306',
     'database': 'financial_data'
 }
