@@ -1,273 +1,805 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import PieChart from './components/PieChart';
-import SummaryCard from './components/SummaryCard';
-import Header from './components/Header';
-import InputForm from './components/InputForm';
-import ScheduleTable from './components/ScheduleTable';
-import { formatCurrency, monthNames } from './utils';
-import ErrorAlert from './components/ErrorAlert';
-
-// กำหนด URL ของ Flask API
-const API_BASE_URL = 'http://localhost:5000'; 
+import React, { useState, useCallback } from "react";
+import Swal from "sweetalert2";
+// Import components from organized structure
+import {
+  Header,
+  Footer,
+  ErrorAlert,
+  ApiStatus,
+  BankInputForm,
+  ComparisonTable,
+  MultiSummaryCards,
+  MultiChartView,
+  SelectableScheduleTable,
+  AppInput,
+  AppDate,
+} from "./components";
+import { API_CONFIG, UI_CONFIG, THAI_BANKS } from "./constants";
+import apiService from "./services/apiService";
+import { AccountBalance, Payments, DateRange } from "@mui/icons-material";
 
 // Component หลัก
 const App = () => {
-    // ----------------------------------------------------
-    // 1. STATE MANAGEMENT
-    // ----------------------------------------------------
-    const today = new Date();
-    const [inputs, setInputs] = useState({
-        initial_loan: 0,
-        monthly_payment: 0,
-        bank: 'ธนาคารกสิกรไทย',
-        MRR: 0,
-        fixed_interest: 0,
-        start_date: today.toISOString().substring(0, 10), // YYYY-MM-DD
+  // ----------------------------------------------------
+  // 1. STATE MANAGEMENT
+  // ----------------------------------------------------
+  const today = new Date();
+
+  // Shared inputs (ใช้ร่วมกันทุกธนาคาร)
+  const [sharedInputs, setSharedInputs] = useState({
+    initial_loan: 0,
+    monthly_payment: 0,
+    start_date: today.toISOString().substring(0, 10), // YYYY-MM-DD
+  });
+
+  // Bank inputs array (รองรับ 4 ธนาคาร)
+  const [banks, setBanks] = useState([
+    {
+      bank: "",
+      MRR: 0,
+      fixed_interest: 0,
+      update_MRR: "",
+      fixed_year: 0,
+      chang_interest_discount1: 0,
+      chang_interest_discount2: 0,
+      schedule: [],
+      summary: { total_principal: 0, total_interest: 0, remaining_balance: 0 },
+    },
+  ]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // ----------------------------------------------------
+  // 2. HANDLERS & API CALL
+  // ----------------------------------------------------
+  const handleSharedInputChange = (e) => {
+    const { name, value, type } = e.target;
+    setSharedInputs((prev) => ({
+      ...prev,
+      [name]: type === "number" ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleBankDataChange = (index, field, value) => {
+    setBanks((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  // const addBank = () => {
+  //     if (banks.length < 4) {
+  //         // สลับธนาคารเริ่มต้นเป็นธนาคารอื่นๆ
+  //         const nextBanks = ['','KTB', 'SCB', 'UOB'];
+  //         const nextBank = nextBanks[banks.length - 1] || 'OTHER';
+
+  //         setBanks(prev => [...prev, {
+  //             bank: nextBank,
+  //             MRR: 0,
+  //             fixed_interest: 0,
+  //             update_MRR: '',
+  //             fixed_year: 0,
+  //             chang_interest_discount1: 0,
+  //             chang_interest_discount2: 0,
+  //             schedule: [],
+  //             summary: { total_principal: 0, total_interest: 0, remaining_balance: 0 }
+  //         }]);
+  //     }
+  // };
+  const addBank = () => {
+    if (banks.length < 4) {
+      setBanks((prev) => [
+        ...prev,
+        {
+          bank: "", // ✅ เป็นค่าว่างตามที่ต้องการ
+          MRR: 0,
+          fixed_interest: 0,
+          update_MRR: "",
+          fixed_year: 0,
+          chang_interest_discount1: 0,
+          chang_interest_discount2: 0,
+          schedule: [],
+          summary: {
+            total_principal: 0,
+            total_interest: 0,
+            remaining_balance: 0,
+          },
+        },
+      ]);
+    }
+  };
+
+  const removeBank = (index) => {
+    if (banks.length > 1) {
+      setBanks((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const calculateAllMortgages = useCallback(async () => {
+    // Validate inputs first
+    if (sharedInputs.initial_loan <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณากรอกข้อมูล",
+        text: "กรุณาระบุวงเงินสินเชื่อ",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#6366f1",
+      });
+      return;
+    }
+
+    if (sharedInputs.monthly_payment <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณากรอกข้อมูล",
+        text: "กรุณาระบุงวดผ่อนชำระต่อเดือน",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#6366f1",
+      });
+      return;
+    }
+
+    // Check if at least one bank is configured
+    console.log("=== DEBUG BANK VALIDATION ===");
+    console.log("Current banks array length:", banks.length);
+    console.log("Current banks data:", JSON.stringify(banks, null, 2)); // Debug: ดูข้อมูลธนาคารทั้งหมดแบบละเอียด
+
+    // const configuredBanks = banks.filter((bank, index) => {
+    //     const hasBank = !!bank.bank;
+    //     const hasMRR = bank.MRR > 0;
+    //     const hasFixedInterest = bank.fixed_interest > 0;
+    //     const hasFixedYear = bank.fixed_year > 0;
+
+    //     console.log(`Bank ${index + 1}:`, {
+    //         bank: bank.bank,
+    //         hasBank,
+    //         MRR: bank.MRR,
+    //         hasMRR,
+    //         fixed_interest: bank.fixed_interest,
+    //         hasFixedInterest,
+    //         fixed_year: bank.fixed_year,
+    //         hasFixedYear
+    //     });
+
+    //     return hasBank && hasMRR && hasFixedInterest && hasFixedYear;
+    // });
+    const configuredBanks = banks.filter((bank, index) => {
+      const hasBank = bank.bank !== "";
+      const hasMRR = Number(bank.MRR) > 0;
+      const hasFixedInterest = Number(bank.fixed_interest) >= 0; // ✅ แก้ตรงนี้
+      const hasFixedYear = Number(bank.fixed_year) >= 0; // ✅ และตรงนี้
+
+      console.log(`Bank ${index + 1}:`, {
+        bank: bank.bank,
+        hasBank,
+        MRR: bank.MRR,
+        hasMRR,
+        fixed_interest: bank.fixed_interest,
+        hasFixedInterest,
+        fixed_year: bank.fixed_year,
+        hasFixedYear,
+      });
+
+      return hasBank && hasMRR && hasFixedInterest && hasFixedYear;
     });
 
-    // Inputs
-    const [backendConfigs, setBackendConfigs] = useState({
-        fixed_year: 0, // ปีคงที่ของดอกเบี้ย
-        // ส่วนลด MRR สำหรับปีถัดไป
-        chang_interest_discount1: 0,
-        chang_interest_discount2: 0,
+    console.log("Configured banks count:", configuredBanks.length);
+    console.log("Configured banks count:", configuredBanks);
+    console.log("=== END DEBUG ===");
+
+    if (configuredBanks.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "ยังไม่พร้อมคำนวณ",
+        text: "กรุณาตั้งค่าธนาคารอย่างน้อย 1 ธนาคารให้ครบถ้วน",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#6366f1",
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "กำลังคำนวณ...",
+      text: `กำลังคำนวณสินเชื่อสำหรับ ${configuredBanks.length} ธนาคาร`,
+      icon: "info",
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+        // Add timeout to prevent infinite loading
+        setTimeout(() => {
+          if (Swal.isLoading()) {
+            Swal.close();
+            Swal.fire({
+              icon: "warning",
+              title: "คำนวณนานเกินไป",
+              text: "การคำนวณใช้เวลานานกว่าที่คาดไว้ กรุณาลองใหม่อีกครั้ง",
+              confirmButtonText: "ตกลง",
+              confirmButtonColor: "#f59e0b",
+            });
+            setIsLoading(false);
+          }
+        }, 30000); // 30 seconds timeout
+      },
     });
 
-    const [schedule, setSchedule] = useState([]);
-    const [summary, setSummary] = useState({
-        total_principal: 0,
-        total_interest: 0,
-        remaining_balance: 0,
-    });
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [showAll, setShowAll] = useState(false);
-    const [bankInfo, setBankInfo] = useState({ update_MRR: '' });
+    setIsLoading(true);
+    setError(null);
 
-    // ดึงข้อมูลธนาคารกสิกรไทยตั้งแต่เริ่มต้น
-    useEffect(() => {
-        fetchBankData('ธนาคารกสิกรไทย');
-    }, []);
-    // ----------------------------------------------------
-    // 2. HANDLERS & API CALL
-    // ----------------------------------------------------
-    const handleChange = (e) => {
-        const { name, value, type } = e.target;
-        setInputs(prev => ({
-            ...prev,
-            [name]: type === 'number' ? parseFloat(value) : value,
-        }));
-    };
-    
-    const handleConfigChange = (e) => {
-        const { name, value, type } = e.target;
-        setBackendConfigs(prev => ({
-            ...prev,
-            [name]: type === 'number' ? parseFloat(value) : value,
-        }));
-    };
+    // ล้างข้อมูลเก่า
+    setBanks((prev) =>
+      prev.map((bank) => ({
+        ...bank,
+        schedule: [],
+        summary: {
+          total_principal: 0,
+          total_interest: 0,
+          remaining_balance: 0,
+        },
+        error: null,
+      }))
+    );
 
-    const calculateMortgage = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        setSchedule([]);
-        setSummary({ total_principal: 0, total_interest: 0, remaining_balance: 0 });
+    const dateParts = sharedInputs.start_date.split("-");
+    const startYear = parseInt(dateParts[0]) + 543;
+    const startMonth = parseInt(dateParts[1]);
 
-        const dateParts = inputs.start_date.split('-');
-        const startYear = parseInt(dateParts[0]) + 543; // แปลงเป็น พ.ศ.
-        const startMonth = parseInt(dateParts[1]);
+    try {
+      const results = await Promise.all(
+        banks.map(async (bank) => {
+          if (!bank.bank || bank.MRR === 0 || bank.fixed_interest === 0) {
+            return { index: banks.indexOf(bank), data: null };
+          }
 
-        // เตรียม chang_interest
-        let chang_interest_for_backend = [];
-        if (backendConfigs.fixed_year === 1) {
+          // เตรียม chang_interest สำหรับแต่ละธนาคาร
+          let chang_interest_for_backend = [];
+          if (bank.fixed_year === 1) {
             chang_interest_for_backend = [
-                backendConfigs.chang_interest_discount1 / 100, // Year 2 discount
-                backendConfigs.chang_interest_discount2 / 100  // Year 3 discount
+              bank.chang_interest_discount1 / 100,
+              bank.chang_interest_discount2 / 100,
             ];
-        } else if (backendConfigs.fixed_year === 2) {
+          } else if (bank.fixed_year === 2) {
+            chang_interest_for_backend = [bank.chang_interest_discount1 / 100];
+          } else {
             chang_interest_for_backend = [
-                backendConfigs.chang_interest_discount1 / 100, // Year 3 discount
+              bank.chang_interest_discount1 / 100,
+              bank.chang_interest_discount2 / 100,
             ];
-        } else {
-            chang_interest_for_backend = [
-                backendConfigs.chang_interest_discount1 / 100,
-                backendConfigs.chang_interest_discount2 / 100
-            ];
-        }
+          }
 
-        const payload = {
+          const payload = {
             start_month: startMonth,
             start_year: startYear,
-            initial_loan: inputs.initial_loan,
-            monthly_payment: inputs.monthly_payment,
-            bank: inputs.bank,
-            
-            // แปลง % เป็นทศนิยมสำหรับ
-            fixed_interest: inputs.fixed_interest / 100, 
-            MRR: inputs.MRR / 100,
-            
-            // Backend config
-            fixed_year: backendConfigs.fixed_year,
+            initial_loan: sharedInputs.initial_loan,
+            monthly_payment: sharedInputs.monthly_payment,
+            bank: bank.bank,
+            fixed_interest: bank.fixed_interest / 100,
+            MRR: bank.MRR / 100,
+            fixed_year: bank.fixed_year,
             chang_interest: chang_interest_for_backend,
-        };
+          };
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/calculate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+          try {
+            const data = await apiService.calculateLoan(payload);
+            return { index: banks.indexOf(bank), data };
+          } catch (err) {
+            console.error(`Calculation Error for ${bank.bank}:`, err);
+            return { index: banks.indexOf(bank), error: err.message };
+          }
+        })
+      );
 
-            const data = await response.json();
+      // อัพเดตผลลัพธ์
+      const updatedBanks = [...banks];
+      let successCount = 0;
+      let errorCount = 0;
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to fetch calculation results.');
-            }
+      results.forEach((result) => {
+        if (result.data) {
+          const bankKey = Object.keys(result.data)[0];
+          const resultSchedule = result.data[bankKey];
 
-            // เนื่องจาก Backend คืนค่าเป็น Object ที่มี Key เป็นชื่อธนาคาร
-            const bankKey = Object.keys(data)[0];
-            const resultSchedule = data[bankKey];
+          if (resultSchedule && Array.isArray(resultSchedule)) {
+            const totalPrincipal = resultSchedule.reduce(
+              (sum, item) => sum + item.balance,
+              0
+            );
+            const totalInterest = resultSchedule.reduce(
+              (sum, item) => sum + item.interest,
+              0
+            );
+            const remainingBalance =
+              resultSchedule.length > 0
+                ? resultSchedule[resultSchedule.length - 1].remaining
+                : sharedInputs.initial_loan;
 
-            // Calculate Summary (from 36-period schedule)
-            const totalPrincipal = resultSchedule.reduce((sum, item) => sum + item.balance, 0);
-            const totalInterest = resultSchedule.reduce((sum, item) => sum + item.interest, 0);
-            const remainingBalance = resultSchedule.length > 0 ? resultSchedule[resultSchedule.length - 1].remaining : inputs.initial_loan;
-
-            setSchedule(resultSchedule);
-            setSummary({
+            updatedBanks[result.index] = {
+              ...updatedBanks[result.index],
+              schedule: resultSchedule,
+              summary: {
                 total_principal: totalPrincipal,
                 total_interest: totalInterest,
                 remaining_balance: remainingBalance,
-            });
-
-        } catch (err) {
-            console.error('API Error:', err.message);
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+              },
+            };
+            successCount++;
+          }
+        } else if (result.error) {
+          // แสดง error แต่ยังคงข้อมูลเดิมไว้
+          updatedBanks[result.index] = {
+            ...updatedBanks[result.index],
+            error: result.error,
+          };
+          errorCount++;
         }
-    }, [inputs, backendConfigs]);
+      });
 
-    // ดึงข้อมูลธนาคารจาก backend ทุกครั้งที่เลือกธนาคาร
-    const fetchBankData = async (bankName) => {
-        if (bankName === 'OTHER') {
-            setInputs(prev => ({
-                ...prev,
-                MRR: '',
-                fixed_interest: ''
-            }));
-            setBankInfo({ update_MRR: '' });
-            return;
+      setBanks(updatedBanks);
+      setError(null);
+
+      // Show success or partial success message
+      if (successCount > 0) {
+        if (errorCount === 0) {
+          Swal.fire({
+            icon: "success",
+            title: "คำนวณสำเร็จ!",
+            text: `คำนวณสินเชื่อสำเร็จ ${successCount} ธนาคาร`,
+            confirmButtonText: "ดูผลลัพธ์",
+            confirmButtonColor: "#10b981",
+            timer: 2000,
+            timerProgressBar: true,
+          });
+        } else {
+          Swal.fire({
+            icon: "warning",
+            title: "คำนวณเสร็จสิ้น (มีข้อผิดพลาดบางส่วน)",
+            html: `คำนวณสำเร็จ ${successCount} ธนาคาร<br>เกิดข้อผิดพลาด ${errorCount} ธนาคาร`,
+            confirmButtonText: "ดูผลลัพธ์",
+            confirmButtonColor: "#f59e0b",
+          });
         }
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/bank-info?bank=${encodeURIComponent(bankName)}`);
-            const data = await response.json();
-            setInputs(prev => ({
-                ...prev,
-                MRR: data.MRR ?? 0,
-                fixed_interest: data.fixed_interest ?? 0
-            }));
-            setBankInfo({
-                update_MRR: data.update_MRR ?? ''
-            });
-        } catch (err) {
-            setBankInfo({ update_MRR: '' });
-        }
-    };
-    // ----------------------------------------------------
-    // 3. UI RENDERING
-    // ----------------------------------------------------
-    const displaySchedule = showAll ? schedule : schedule.slice(0, 5);
-    // คำนวณเปอร์เซ็นต์สำหรับ Pie Chart
-    const totalRepaid = summary.total_principal + summary.total_interest;
-    const principalPercent = totalRepaid > 0 ? (summary.total_principal / totalRepaid) * 100 : 50;
-    const interestPercent = totalRepaid > 0 ? (summary.total_interest / totalRepaid) * 100 : 50;
+      } else if (successCount === 0 && errorCount > 0) {
+        // All calculations failed
+        Swal.fire({
+          icon: "error",
+          title: "คำนวณล้มเหลวทั้งหมด",
+          text: "ไม่สามารถคำนวณสินเชื่อได้สำหรับธนาคารที่เลือกทั้งหมด กรุณาตรวจสอบข้อมูลและลองใหม่",
+          confirmButtonText: "ตกลง",
+          confirmButtonColor: "#ef4444",
+        });
+      } else {
+        // No banks configured at all
+        Swal.fire({
+          icon: "info",
+          title: "ไม่มีข้อมูลสำหรับคำนวณ",
+          text: "กรุณาตั้งค่าธนาคารและข้อมูลที่จำเป็นก่อนคำนวณ",
+          confirmButtonText: "ตกลง",
+          confirmButtonColor: "#6366f1",
+        });
+      }
+    } catch (err) {
+      console.error("Calculation Error:", err);
+      setError(err.message);
+      Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถคำนวณได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setIsLoading(false);
+      Swal.close();
+    }
+  }, [banks, sharedInputs]);
 
-    return (
-        <div className="min-h-screen bg-gray-50" data-theme="light">
-            <Header />
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">คำนวณสินเชื่อบ้าน</h1>
-                <p className="text-center text-gray-500 mb-10">คำนวณเงินผ่อน ดอกเบี้ย และวางแผนการชำระสินเชื่อบ้านของคุณ</p>
-                <ErrorAlert error={error} />
+  // ----------------------------------------------------
+  // 3. UI RENDERING
+  // ----------------------------------------------------
+  // เตรียมข้อมูลธนาคารสำหรับแสดงผล
+  const banksWithLabels = banks.map((bank) => ({
+    ...bank,
+    bankLabel:
+      THAI_BANKS.find((b) => b.value === bank.bank)?.label || bank.bank,
+  }));
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column: Input Form */}
-                    <InputForm
-                        inputs={inputs}
-                        backendConfigs={backendConfigs}
-                        handleChange={handleChange}
-                        handleConfigChange={handleConfigChange}
-                        calculateMortgage={calculateMortgage}
-                        isLoading={isLoading}
-                        onBankChange={fetchBankData}
-                        bankInfo={bankInfo}
+  return (
+    <div className="min-h-screen bg-gray-50" data-theme="light">
+      <Header />
+      <ApiStatus />
+      <main>
+        {/* Hero Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                คำนวณสินเชื่อบ้าน
+                <span className="block text-blue-600 mt-2">
+                  เครื่องมือทางการเงินที่เชื่อถือได้
+                </span>
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                เครื่องมือคำนวณเงินผ่อนบ้านที่แม่นยำ รองรับดอกเบี้ยแบบลอยตาม MRR
+                ของธนาคารชั้นนำ
+                วางแผนการเงินของคุณอย่างมั่นใจและตัดสินใจได้อย่างชาญฉลาด
+              </p>
+              <div className="mt-8 flex justify-center space-x-4">
+                <div className="flex items-center text-sm text-gray-500">
+                  <svg
+                    className="w-4 h-4 mr-1 text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
                     />
-                    {/* Right Columns: Summary and Chart */}
-                    <div className="lg:col-span-2 space-y-8">
-                        {/* Summary Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <SummaryCard 
-                                title="จำนวนเงินต้นที่ตัดได้ (36 งวด)"
-                                amount={summary.total_principal}
-                                unit="บาท"
-                                colorClass="bg-blue-100 text-blue-600"
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>}
-                            />
-                            <SummaryCard 
-                                title="จำนวนจ่ายดอกเบี้ย (36 งวด)"
-                                amount={summary.total_interest}
-                                unit="บาท"
-                                colorClass="bg-yellow-100 text-yellow-600"
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.88 15.68c-.62-.22-1.27-.47-1.92-.68-.18-.06-.35-.11-.53-.17v-1.77c.33.11.66.21 1 .31.34.1.68.21 1.02.32.34.1.65.22.95.32.3.11.56.24.78.39.22.15.39.34.51.57.12.23.18.49.18.82 0 .42-.14.75-.41 1.02-.27.27-.67.4-1.21.4-.46 0-.87-.14-1.23-.42zm2.14-5.35c-.44-.24-.92-.45-1.42-.64-.5-.18-1-.34-1.5-.48v-2.02c.48.11.96.22 1.44.33.48.11.93.22 1.35.34.42.11.77.26 1.05.45.28.19.45.43.51.72.06.3-.01.54-.23.77-.22.23-.59.39-1.11.48zM12 11.2V7.5h1.25V6H9.5v1.5h1.25V11.2c-1.35.25-2.5.88-3.45 1.9L9 14.5c.87-.7 1.95-1.12 3-1.27 1.05.15 2.13.57 3 1.27l1.2-1.4c-.95-1.02-2.1-1.65-3.45-1.9z"/></svg>}
-                            />
-                            <SummaryCard 
-                                title="ยอดคงเหลือ (หลัง 36 งวด)"
-                                amount={summary.remaining_balance}
-                                unit="บาท"
-                                colorClass="bg-green-100 text-green-600"
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15.3l-5-2.14-5 2.14V5h10v13.3z"/></svg>}
-                            />
-                        </div>
-
-                        {/* Chart Section */}
-                        <div className="card shadow-lg bg-white rounded-xl border border-gray-200">
-                            <div className="card-body p-6">
-                                <h2 className="card-title text-gray-700">สัดส่วนการชำระเงิน (36 งวด)</h2>
-                                <div className="flex flex-col md:flex-row items-center justify-around mt-4">
-                                    <PieChart 
-                                        principalPercent={principalPercent}
-                                        interestPercent={interestPercent}
-                                    />
-                                    <div className="space-y-2 mt-4 md:mt-0">
-                                        <div className="flex items-center">
-                                            <span className="block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                                            <span className="text-gray-600">เงินต้น ({formatCurrency(principalPercent)}%)</span>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <span className="block w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
-                                            <span className="text-gray-600">ดอกเบี้ย ({formatCurrency(interestPercent)}%)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Schedule Table */}
-                        <ScheduleTable
-                            schedule={schedule}
-                            displaySchedule={showAll ? schedule : schedule.slice(0, 5)}
-                            showAll={showAll}
-                            setShowAll={setShowAll}
-                            monthly_payment={inputs.monthly_payment}
-                        />
-                    </div>
+                  </svg>
+                  แม่นยำ
                 </div>
-            </main>
-            <footer className="footer footer-center p-4 bg-white text-base-content border-t mt-10">
-            </footer>
+                <div className="flex items-center text-sm text-gray-500">
+                  <svg
+                    className="w-4 h-4 mr-1 text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  รวดเร็ว
+                </div>
+                <div className="flex items-center text-sm text-gray-500">
+                  <svg
+                    className="w-4 h-4 mr-1 text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  ฟรี
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    );
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <ErrorAlert
+            error={error}
+            onRetry={() => {
+              if (error && error.toLowerCase().includes("คำนวณ")) {
+                calculateAllMortgages();
+              }
+              setError(null);
+            }}
+            showRetry={error && error.toLowerCase().includes("คำนวณ")}
+          />
+
+          {/* Shared Input Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div className="lg:col-span-1 space-y-4 lg:col-span-1">
+              {/* Hero Card - Shared Inputs */}
+              <div className="card bg-white shadow-lg border border-gray-200">
+                <div className="card-body p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-gray-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-800">ข้อมูลเงินกู้</h3>
+                      <p className="text-gray-500 text-sm">
+                        ระบุวงเงินและเงินผ่อนที่ต้องการ
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <AppInput
+                      label="จำนวนเงินกู้ (บาท)"
+                      type="text"
+                      name="initial_loan"
+                      value={
+                        sharedInputs.initial_loan
+                          ? sharedInputs.initial_loan.toLocaleString("th-TH")
+                          : ""
+                      }
+                      onChange={(value) => {
+                        const raw = value.replace(/,/g, "");
+                        const num = parseFloat(raw) || 0;
+                        handleSharedInputChange({
+                          target: {
+                            name: "initial_loan",
+                            value: num,
+                            type: "number",
+                          },
+                        });
+                      }}
+                      step={0.01}
+                      placeholder="3,000,000"
+                      icon={<AccountBalance />}
+                      color="blue"
+                      helperText="วงเงินสินเชื่อที่ต้องการกู้"
+                      required
+                    />
+
+                    <AppInput
+                      label="เงินผ่อนต่อเดือน (บาท)"
+                      type="text"
+                      name="monthly_payment"
+                      value={
+                        sharedInputs.monthly_payment
+                          ? sharedInputs.monthly_payment.toLocaleString("th-TH")
+                          : ""
+                      }
+                      onChange={(value) => {
+                        const raw = value.replace(/,/g, "");
+                        const num = parseFloat(raw) || 0;
+                        handleSharedInputChange({
+                          target: {
+                            name: "monthly_payment",
+                            value: num,
+                            type: "number",
+                          },
+                        });
+                      }}
+                        step={0.01}
+                      placeholder="15,000"
+                      icon={<Payments />}
+                      color="indigo"
+                      helperText="งวดผ่อนชำระต่อเดือนที่ต้องการจ่าย"
+                      required
+                    />
+
+                    <AppDate
+                      label="วันเริ่มต้นผ่อนชำระ"
+                      name="start_date"
+                      value={sharedInputs.start_date}
+                      onChange={(value) => {
+                        handleSharedInputChange({
+                          target: { name: "start_date", value, type: "text" },
+                        });
+                      }}
+                      helperText="วันที่เริ่มต้นชำระเงินผ่อน"
+                      color="purple"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Calculate Button */}
+              <button
+                className="btn btn-primary btn-lg w-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 text-white font-semibold disabled:from-gray-400 disabled:to-gray-500 disabled:transform-none"
+                onClick={calculateAllMortgages}
+                disabled={
+                  isLoading ||
+                  sharedInputs.initial_loan <= 0 ||
+                  sharedInputs.monthly_payment <= 0
+                }
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner"></span>
+                    <span>กำลังคำนวณ...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span>คำนวณเปรียบเทียบ</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="lg:col-span-2">
+              {/* Bank Selection Header */}
+              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-green-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                          />
+                        </svg>
+                      </div>
+                      เลือกธนาคารที่ต้องการเปรียบเทียบ
+                    </h3>
+                    <p className="text-gray-500 text-sm mt-1">
+                      เลือกได้สูงสุด 4 ธนาคารเพื่อเปรียบเทียบเงื่อนไขสินเชื่อ
+                    </p>
+                  </div>
+                  <button
+                    onClick={addBank}
+                    disabled={banks.length >= 4}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg 
+             bg-green-500 hover:bg-green-600 
+             text-white text-sm font-medium
+             shadow-sm hover:shadow-md
+             transition-all duration-200
+             disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    เพิ่มธนาคาร
+                  </button>
+                </div>
+
+                {/* Bank Counter */}
+                <div className="mt-4 flex items-center gap-2">
+                  <div className="flex gap-1">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                          i < banks.length ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    {banks.length}/4 ธนาคาร
+                  </span>
+                </div>
+              </div>
+
+              {/* Bank Forms Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {banks.map((bank, index) => (
+                  <BankInputForm
+                    key={index}
+                    bankData={bank}
+                    index={index}
+                    onBankDataChange={handleBankDataChange}
+                    onRemoveBank={removeBank}
+                    canRemove={banks.length > 1}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Results Section */}
+          {banks.some((bank) => bank.schedule && bank.schedule.length > 0) && (
+            <div className="space-y-8">
+              {/* Results Header */}
+              <div className="text-center">
+                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-full shadow-lg">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-bold text-lg">ผลการคำนวณสินเชื่อ</span>
+                </div>
+                <p className="text-gray-500 mt-2">
+                  เปรียบเทียบเงื่อนไขสินเชื่อจาก{" "}
+                  {
+                    banks.filter(
+                      (bank) => bank.schedule && bank.schedule.length > 0
+                    ).length
+                  }{" "}
+                  ธนาคาร
+                </p>
+              </div>
+
+              {/* Comparison Table */}
+              <div className="mb-8">
+                <div className="card bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-4">
+                    <h3 className="text-xl font-bold flex items-center gap-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                        />
+                      </svg>
+                      ตารางเปรียบเทียบรายละเอียด
+                    </h3>
+                  </div>
+                  <div className="p-6">
+                    <ComparisonTable banks={banksWithLabels} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Summary Cards for All Banks */}
+              <MultiSummaryCards banks={banks} />
+
+              {/* Multiple Charts */}
+              <MultiChartView banks={banks} />
+
+              {/* Selectable Schedule Table */}
+              <SelectableScheduleTable
+                banks={banks}
+                monthly_payment={sharedInputs.monthly_payment}
+              />
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 };
 
 export default App;

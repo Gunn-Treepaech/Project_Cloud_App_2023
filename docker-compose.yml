@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
   # change version app.
-    build: ./app
+    build: ./backend/app
     links:
       - db
     ports:
@@ -24,7 +24,7 @@ services:
       - "32000:3306"
     volumes:
     # change version db.
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./data:/var/lib/mysql
     networks:
       - my-custom-network
