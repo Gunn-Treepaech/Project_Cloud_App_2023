@@ -8,7 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ✅ คัดลอกไฟล์ทั้งหมดในโฟลเดอร์ app เข้า container
-COPY . .
+COPY app/ .
 
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
