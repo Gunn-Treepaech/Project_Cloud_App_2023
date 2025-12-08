@@ -88,12 +88,14 @@ The application follows a **microservices architecture** with three main compone
 - **Entry Point**: `frontend/src/main.jsx`
 - **Main Component**: `frontend/src/App.jsx` - Centralized state management
 - **Component Architecture**:
-  - `InputForm.jsx` - Loan parameter inputs
-  - `ScheduleTable.jsx` - Payment schedule display
-  - `PieChart.jsx` - Principal vs interest visualization
-  - `SummaryCard.jsx` - Financial summary
-  - `Header.jsx` - Application header
-  - `ErrorAlert.jsx` - Error handling
+  ```
+  frontend/src/components/
+  ├── common/          # AppInput, AppSelect, AppDate (with hideSuffix)
+  ├── forms/           # BankInputForm (per-bank configuration)
+  ├── results/         # MultiSummaryCards, MultiChartView, BankSelector
+  ├── tables/          # SelectableScheduleTable
+  └── charts/          # Comparison visualizations
+  ```
 
 ### Database (MySQL)
 - **Location**: `database/`
@@ -214,6 +216,27 @@ Test all endpoints with proper JSON payloads:
 - All financial calculations maintain Decimal precision for accuracy in production environments
 - Thai bank names: "ธนาคารกสิกรไทย" (Kbank), "ธนาคารกรุงไทย" (KTB), "ธนาคารไทยพาณิชย์" (SCB), "ธนาคารยูโอบี" (UOB)
 
+## Advanced Component Features
+
+### Input Components (AppInput, AppSelect, AppDate)
+All custom input components support advanced features:
+
+- **hideSuffix prop**: Hides ".shsojvp" suffix from UI while maintaining it for processing
+- **decimal prop**: Automatically formats numeric inputs to specified decimal places (e.g., `decimal={2}`)
+- **useEventObject prop**: Controls whether onChange receives event object or direct value
+- **Color themes**: indigo, emerald, purple, blue with consistent styling
+- **Size variants**: small, normal, large with appropriate padding and text sizing
+- **Icon support**: Left or right positioned icons with automatic color theming
+
+### Multi-Bank Comparison Architecture
+The frontend supports comparing up to 4 banks simultaneously:
+
+- **Bank Configuration**: Each bank has independent MRR, fixed interest rates, and discount periods
+- **Shared Parameters**: Loan amount, monthly payment, and start date are shared across banks
+- **State Management**: Centralized in `App.jsx` with arrays for bank-specific data
+- **Validation**: Real-time validation with detailed console logging for debugging
+- **Visual Comparison**: Side-by-side charts, summary cards, and selectable schedule tables
+
 ## Common Troubleshooting
 
 ### Frontend Won't Load / Calculation Issues
@@ -228,15 +251,21 @@ The app includes detailed console logging. Open browser console and click "Calcu
 - Individual field validation results
 - Configuration issues
 
-### Component Structure for Multi-Bank Feature
-```
-frontend/src/components/
-├── common/          # AppInput, AppSelect, AppDate (with hideSuffix)
-├── forms/           # BankInputForm (per-bank configuration)
-├── results/         # MultiSummaryCards, MultiChartView, BankSelector
-├── tables/          # SelectableScheduleTable
-└── charts/          # Comparison visualizations
-```
+## Error Handling Patterns
+
+### Frontend Error Handling
+- **API Timeouts**: 10-second timeout prevents hanging requests
+- **HTTP Status Codes**: Proper error responses for 4xx/5xx status codes
+- **Validation Errors**: Real-time field validation with user-friendly messages
+- **Network Errors**: Graceful degradation when backend is unavailable
+- **SweetAlert2**: Modal dialogs for loading states and error notifications
+
+### Backend Error Handling
+- **Database Connections**: Retry logic and connection pool management
+- **Input Validation**: Parameter sanitization and type checking
+- **SQL Injection Protection**: All queries use parameterized statements
+- **Financial Precision**: Decimal arithmetic prevents floating-point errors
+- **CORS Configuration**: Secure cross-origin request handling
 
 ## Security & Performance
 
