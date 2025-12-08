@@ -3,6 +3,8 @@ import { API_CONFIG } from '../constants';
 class ApiService {
     constructor() {
         this.baseURL = API_CONFIG.BASE_URL;
+        console.log("this.baseurl",this.baseURL);
+        
     }
 
     async request(endpoint, options = {}) {
