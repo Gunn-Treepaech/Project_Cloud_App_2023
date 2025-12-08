@@ -5,7 +5,7 @@ EXPOSE 5000
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY app/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
