@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend/app
+    build:
+      context: ./backend
+      dockerfile: app/Dockerfile
     container_name: mortgage-backend
     ports:
       - "5000:5000"
