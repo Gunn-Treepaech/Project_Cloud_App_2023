@@ -6,7 +6,13 @@ import re
 
 # สร้าง Flask app และเปิดใช้งาน CORS เพื่อให้ frontend สามารถเรียก API ได้
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # กำหนดค่าการเชื่อมต่อฐานข้อมูล MySQL
 config = {
