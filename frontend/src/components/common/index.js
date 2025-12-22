@@ -6,3 +6,4 @@ export { default as BeautifulSelect } from './BeautifulSelect';
 export { default as AppInput } from './AppInput';
 export { default as AppSelect } from './AppSelect';
 export { default as AppDate } from './AppDate';
+export { default as UserGuide } from './UserGuide';

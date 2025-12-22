@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import UserGuide from '../common/UserGuide';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showUserGuide, setShowUserGuide] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -12,6 +14,7 @@ const Header = () => {
     };
 
     return (
+        <>
         <header className="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
@@ -54,12 +57,26 @@ const Header = () => {
                             >
                                 คำนวณเงินผ่อน
                             </a>
-                            <a
-                                href="#guide"
-                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out"
+                            <button
+                                onClick={() => setShowUserGuide(true)}
+                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out flex items-center gap-1"
                             >
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
                                 คู่มือการใช้งาน
-                            </a>
+                            </button>
                             <a
                                 href="#about"
                                 className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out"
@@ -156,13 +173,29 @@ const Header = () => {
                             >
                                 คำนวณเงินผ่อน
                             </a>
-                            <a
-                                href="#guide"
-                                onClick={closeMenu}
-                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 block px-3 py-2 rounded-md text-base font-medium"
+                            <button
+                                onClick={() => {
+                                    setShowUserGuide(true);
+                                    closeMenu();
+                                }}
+                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 block px-3 py-2 rounded-md text-base font-medium text-left w-full flex items-center gap-2"
                             >
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
                                 คู่มือการใช้งาน
-                            </a>
+                            </button>
                             <a
                                 href="#about"
                                 onClick={closeMenu}
@@ -205,6 +238,11 @@ const Header = () => {
                 )}
             </nav>
         </header>
+
+        {/* User Guide Modal */}
+        <UserGuide open={showUserGuide} onClose={() => setShowUserGuide(false)} />
+
+         </>
     );
 };
 

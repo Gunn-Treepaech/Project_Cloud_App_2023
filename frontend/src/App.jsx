@@ -394,6 +394,59 @@ const App = () => {
     }
   }, [banks, sharedInputs]);
 
+  // Reset all data function
+  const resetAllData = useCallback(async () => {
+    const result = await Swal.fire({
+      title: 'ยืนยันการรีเซ็ตข้อมูล',
+      text: 'คุณต้องการล้างข้อมูลทั้งหมดและเริ่มใหม่หรือไม่?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'ยืนยันรีเซ็ต',
+      cancelButtonText: 'ยกเลิก',
+      reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+      // Reset shared inputs to default values
+      const today = new Date();
+      setSharedInputs({
+        initial_loan: 0,
+        monthly_payment: 0,
+        start_date: today.toISOString().substring(0, 10),
+      });
+
+      // Reset banks to initial state with one empty bank
+      setBanks([{
+        bank: "",
+        MRR: 0,
+        fixed_interest: 0,
+        update_MRR: "",
+        fixed_year: 0,
+        chang_interest_discount1: 0,
+        chang_interest_discount2: 0,
+        schedule: [],
+        summary: { total_principal: 0, total_interest: 0, remaining_balance: 0 },
+      }]);
+
+      // Clear any errors
+      setError(null);
+      setIsLoading(false);
+
+      // Show success message
+      await Swal.fire({
+        title: 'รีเซ็ตข้อมูลสำเร็จ',
+        text: 'ข้อมูลทั้งหมดถูกล้างเรียบร้อยแล้ว',
+        icon: 'success',
+        confirmButtonColor: '#10b981',
+        confirmButtonText: 'ตกลง',
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }
+  }, []);
+
   // ----------------------------------------------------
   // 3. UI RENDERING
   // ----------------------------------------------------
@@ -581,41 +634,67 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Calculate Button */}
-              <button
-                className="btn btn-primary btn-lg w-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 text-white font-semibold disabled:from-gray-400 disabled:to-gray-500 disabled:transform-none"
-                onClick={calculateAllMortgages}
-                disabled={
-                  isLoading ||
-                  sharedInputs.initial_loan <= 0 ||
-                  sharedInputs.monthly_payment <= 0
-                }
-              >
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner"></span>
-                    <span>กำลังคำนวณ...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <span>คำนวณเปรียบเทียบ</span>
-                  </>
-                )}
-              </button>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Calculate Button */}
+                <button
+                  className="btn btn-primary shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 text-white font-semibold disabled:from-gray-400 disabled:to-gray-500 disabled:transform-none"
+                  onClick={calculateAllMortgages}
+                  disabled={
+                    isLoading ||
+                    sharedInputs.initial_loan <= 0 ||
+                    sharedInputs.monthly_payment <= 0
+                  }
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      <span className="text-sm">กำลังคำนวณ...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span className="text-sm">คำนวณเปรียบเทียบ</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Reset Button */}
+                <button
+                  className="btn shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 border-0 text-white font-semibold disabled:from-gray-400 disabled:to-gray-500 disabled:transform-none"
+                  onClick={resetAllData}
+                  disabled={isLoading}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  <span className="text-sm">รีเซ็ตข้อมูล</span>
+                </button>
+              </div>
             </div>
 
             <div className="lg:col-span-2">
