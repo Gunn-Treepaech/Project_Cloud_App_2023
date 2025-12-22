@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../utils';
+import { THAI_BANKS } from '../../constants';
 
 const ComparisonTable = ({ banks }) => {
     if (!banks || banks.length === 0) {
@@ -10,7 +11,11 @@ const ComparisonTable = ({ banks }) => {
         );
     }
 
-    const filteredBanks = banks.filter(bank => bank.summary && bank.schedule && bank.schedule.length > 0);
+    // Filter banks with results and sort by their original order (1, 2, 3, ...)
+    const filteredBanks = banks
+        .map((bank, index) => ({ ...bank, originalIndex: index }))
+        .filter(bank => bank.summary && bank.schedule && bank.schedule.length > 0)
+        .sort((a, b) => a.originalIndex - b.originalIndex);
 
     if (filteredBanks.length === 0) {
         return (
@@ -40,10 +45,13 @@ const ComparisonTable = ({ banks }) => {
                         const interestRatio = bank.summary.total_principal > 0
                             ? (bank.summary.total_interest / bank.summary.total_principal) * 100
                             : 0;
+                        const bankLabel = THAI_BANKS.find(b => b.value === bank.bank)?.label?.replace(/^\d+\.\s*/, '') || bank.bank;
 
                         return (
-                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                                <td className="font-medium">{bank.bankLabel}</td>
+                            <tr key={bank.originalIndex} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                <td className="font-medium">
+                                    {bankLabel}
+                                </td>
                                 <td className="text-center">{bank.MRR || 0}</td>
                                 <td className="text-center">{bank.fixed_interest || 0}</td>
                                 <td className="text-center">{bank.fixed_year || 0}</td>

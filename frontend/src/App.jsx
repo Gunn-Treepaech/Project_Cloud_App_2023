@@ -8,9 +8,7 @@ import {
   ApiStatus,
   BankInputForm,
   ComparisonTable,
-  MultiSummaryCards,
-  MultiChartView,
-  SelectableScheduleTable,
+  ConsolidatedResults,
   AppInput,
   AppDate,
 } from "./components";
@@ -771,14 +769,8 @@ const App = () => {
                 </div>
               </div>
 
-              {/* Summary Cards for All Banks */}
-              <MultiSummaryCards banks={banks} />
-
-              {/* Multiple Charts */}
-              <MultiChartView banks={banks} />
-
-              {/* Selectable Schedule Table */}
-              <SelectableScheduleTable
+              {/* Consolidated Results - All 3 main components in one */}
+              <ConsolidatedResults
                 banks={banks}
                 monthly_payment={sharedInputs.monthly_payment}
               />

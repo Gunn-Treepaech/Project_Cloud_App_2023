@@ -10,7 +10,8 @@ export const THAI_BANKS = [
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: '',  // Use relative URL for Vite proxy
+  // BASE_URL: '',  // Use relative URL for Vite proxy
+  BASE_URL: 'http://192.168.1.126:5000',
   ENDPOINTS: {
     CALCULATE: '/api/calculate',
     BANK_INFO: '/api/bank-info',
