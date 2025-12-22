@@ -32,14 +32,14 @@ const Header = () => {
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M12 14l4-4m0 0l4-4M4 20l3.536-3.536M20.485 7.515L17 11l-3.536-3.536M16 11a4 4 0 11-8 0 4 4 0 018 0z"
                                         />
                                     </svg>
                                 </div>
                                 {/* Brand Name */}
                                 <div>
                                     <h1 className="text-xl font-bold text-white">เครื่องมือคำนวณสินเชื่อบ้าน</h1>
-                                    <p className="text-xs text-blue-100">สำหรับการวางแผนการเงิน</p>
+                                    <p className="text-xs text-blue-100">เครื่องมือคำนวณสินเชื่อ</p>
                                 </div>
                             </div>
                         </div>

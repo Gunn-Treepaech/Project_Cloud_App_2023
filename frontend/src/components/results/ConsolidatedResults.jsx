@@ -86,7 +86,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                             ดอกเบี้ย {bank.fixed_interest}%
                           </span>
                           <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                            Fixed {bank.fixed_year}ปี
+                            {bank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `Fixed ${bank.fixed_year}ปี`}
                           </span>
                         </div>
                       </div>
@@ -310,7 +310,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                         ดอกเบี้ย {selectedBank.fixed_interest}%
                       </span>
                       <span className="bg-purple-100/20 text-purple-100 px-2 py-1 rounded">
-                        Fixed {selectedBank.fixed_year}ปี
+                        {selectedBank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `Fixed ${selectedBank.fixed_year}ปี`}
                       </span>
                     </div>
                   </div>

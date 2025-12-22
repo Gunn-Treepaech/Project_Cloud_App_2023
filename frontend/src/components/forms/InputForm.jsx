@@ -164,7 +164,7 @@ const InputForm = ({
                         }}
                         className="select select-bordered border-gray-300 shadow-sm px-4 py-2"
                     >
-                        <option>กำหนด Fixed Rate</option>
+                        <option value={0}>ไม่มี Fixed Rate (ดอกเบี้ยลอยตลอด)</option>
                         <option value={1}>1 ปี</option>
                         <option value={2}>2 ปี</option>
                         <option value={3}>3 ปี</option>

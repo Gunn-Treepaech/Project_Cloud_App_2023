@@ -308,7 +308,8 @@ const BankInputForm = ({
             <AppSelect
               value={bankData.fixed_year}
               onChange={(value) => {
-                const v = parseInt(value);
+                // Auto-set to 0 when user deletes/clears the selection
+                const v = value === '' || value === null || value === undefined ? 0 : parseInt(value);
                 handleConfigChange({
                   target: { name: "fixed_year", value: v, type: "number" },
                 });
@@ -328,7 +329,7 @@ const BankInputForm = ({
                 });
               }}
               options={[
-                { label: "เลือกระยะเวลา...", value: "", disabled: true },
+                { label: "ไม่มี Fixed Rate (ดอกเบี้ยลอยตลอด)", value: 0 },
                 { label: "1 ปี - Fixed Rate", value: 1 },
                 { label: "2 ปี - Fixed Rate", value: 2 },
                 { label: "3 ปี - Fixed Rate", value: 3 },

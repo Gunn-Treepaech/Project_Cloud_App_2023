@@ -101,7 +101,7 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
                                         ดอกเบี้ย: {selectedBank.fixed_interest}%
                                     </span>
                                     <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                                        Fixed: {selectedBank.fixed_year} ปี
+                                        Fixed: {selectedBank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `${selectedBank.fixed_year} ปี`}
                                     </span>
                                 </div>
                             </div>

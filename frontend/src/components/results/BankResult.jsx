@@ -28,7 +28,7 @@ const BankResult = ({ bank, monthly_payment }) => {
         <div className="flex items-center gap-4 text-sm text-gray-600">
           <span>MRR: {bank.MRR}%</span>
           <span>ดอกเบี้ยคงที่: {bank.fixed_interest}%</span>
-          <span>Fixed Rate: {bank.fixed_year} ปี</span>
+          <span>Fixed Rate: {bank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `${bank.fixed_year} ปี`}</span>
         </div>
       </div>
 
