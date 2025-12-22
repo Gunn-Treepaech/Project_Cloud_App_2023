@@ -511,7 +511,9 @@ const App = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-800">ข้อมูลเงินกู้</h3>
+                      <h3 className="text-xl font-bold text-gray-800">
+                        ข้อมูลเงินกู้
+                      </h3>
                       <p className="text-gray-500 text-sm">
                         ระบุวงเงินและเงินผ่อนที่ต้องการ
                       </p>
@@ -521,26 +523,21 @@ const App = () => {
                   <div className="space-y-4">
                     <AppInput
                       label="จำนวนเงินกู้ (บาท)"
-                      type="text"
+                      type="number"
+                      decimal={2}
                       name="initial_loan"
-                      value={
-                        sharedInputs.initial_loan
-                          ? sharedInputs.initial_loan.toLocaleString("th-TH")
-                          : ""
-                      }
+                      value={sharedInputs.initial_loan}
                       onChange={(value) => {
-                        const raw = value.replace(/,/g, "");
-                        const num = parseFloat(raw) || 0;
+                        // ส่งค่า string ไปตรงๆ เพื่อให้เก็บ "จุด" ไว้ได้ขณะพิมพ์
                         handleSharedInputChange({
                           target: {
                             name: "initial_loan",
-                            value: num,
-                            type: "number",
+                            value: value, // ห้าม parseFloat ตรงนี้เด็ดขาด
+                            type: "text",
                           },
                         });
                       }}
-                      step={0.01}
-                      placeholder="3,000,000"
+                      placeholder="3000000.00"
                       icon={<AccountBalance />}
                       color="blue"
                       helperText="วงเงินสินเชื่อที่ต้องการกู้"
@@ -549,26 +546,20 @@ const App = () => {
 
                     <AppInput
                       label="เงินผ่อนต่อเดือน (บาท)"
-                      type="text"
+                      type="number"
+                      decimal={2}
                       name="monthly_payment"
-                      value={
-                        sharedInputs.monthly_payment
-                          ? sharedInputs.monthly_payment.toLocaleString("th-TH")
-                          : ""
-                      }
+                      value={sharedInputs.monthly_payment}
                       onChange={(value) => {
-                        const raw = value.replace(/,/g, "");
-                        const num = parseFloat(raw) || 0;
                         handleSharedInputChange({
                           target: {
                             name: "monthly_payment",
-                            value: num,
-                            type: "number",
+                            value: value, // ส่งค่า string ไปตรงๆ
+                            type: "text",
                           },
                         });
                       }}
-                        step={0.01}
-                      placeholder="15,000"
+                      placeholder="15000.00"
                       icon={<Payments />}
                       color="indigo"
                       helperText="งวดผ่อนชำระต่อเดือนที่ต้องการจ่าย"

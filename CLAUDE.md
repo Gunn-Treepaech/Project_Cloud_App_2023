@@ -35,7 +35,7 @@ python app.py  # Runs on 0.0.0.0:5000
 # Frontend (React)
 cd frontend
 npm install
-npm run dev    # Runs on localhost:5173
+npm run dev    # Runs on 0.0.0.0:5173 (accessible from other devices)
 
 # Database (MySQL)
 # Runs on port 32000 via docker-compose
@@ -45,7 +45,7 @@ npm run dev    # Runs on localhost:5173
 ```bash
 cd frontend
 npm install       # Install dependencies (includes @mui/material, @mui/icons-material, sweetalert2)
-npm run dev      # Start development server with hot reload (runs on :5173 or :5174 if 5173 occupied)
+npm run dev      # Start development server with hot reload on 0.0.0.0:5173
 npm run build    # Build for production
 npm run preview  # Preview production build locally
 npm run lint     # Run ESLint checks
@@ -56,6 +56,7 @@ The frontend requires these specific packages for the multi-bank comparison UI:
 - `@mui/material` - Material-UI components for beautiful selects
 - `@mui/icons-material` - Material-UI icons (ExpandMore, AccountBalance, DateRange, etc.)
 - `sweetalert2` - Modal dialogs and loading states
+- `lucide-react` - Additional icon set for UI components
 
 ### Backend Development
 ```bash
@@ -150,12 +151,16 @@ The application follows a **microservices architecture** with three main compone
 - Input Suffix Handling: All numeric inputs support ".shsojvp" suffix for processing (hidden from UI)
 
 ### Port Configuration
-- Frontend: 5173 (development), auto-switches to 5174 if port occupied
+- Frontend: 5173 (development on 0.0.0.0, accessible from other devices), auto-switches to 5174 if port occupied
 - Backend: 5000
 - Database: 32000 (external access), 3306 (internal Docker network)
 
+### Build Configuration
+- **Vite Config**: Frontend runs on 0.0.0.0:5173 with proxy to backend at `/api` routes
+- **API Proxy**: Development proxy configured to route `/api/*` requests to `http://backend:5000`
+- **Tailwind CSS**: Configured with DaisyUI themes (light, dark, corporate)
+
 ### Immediate Issues to Address
-- **Missing Dependency**: Must install `@mui/icons-material` package for BeautifulSelect component
 - **API Connection**: Frontend configured to connect to `http://192.168.1.126:5000` - verify backend availability
 
 ## Special Features
@@ -240,10 +245,9 @@ The frontend supports comparing up to 4 banks simultaneously:
 ## Common Troubleshooting
 
 ### Frontend Won't Load / Calculation Issues
-1. **Missing Dependencies**: Run `npm install @mui/icons-material` if BeautifulSelect fails
-2. **API Connection**: Check backend is running and update API_BASE_URL in constants/index.js
-3. **Bank Selection Not Working**: Check browser console (F12) for debug messages - shows bank validation details
-4. **Input Issues**: Ensure all required fields are filled (bank selection, MRR > 0, fixed interest > 0, fixed year > 0)
+1. **API Connection**: Check backend is running and update API_BASE_URL in constants/index.js
+2. **Bank Selection Not Working**: Check browser console (F12) for debug messages - shows bank validation details
+3. **Input Issues**: Ensure all required fields are filled (bank selection, MRR > 0, fixed interest > 0, fixed year > 0)
 
 ### Debug Bank Validation
 The app includes detailed console logging. Open browser console and click "Calculate" to see:
