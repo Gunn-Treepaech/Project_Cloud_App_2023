@@ -232,6 +232,77 @@ const App = () => {
     setIsLoading(true);
     setError(null);
 
+    // ตรวจสอบวันที่เริ่มต้นผ่อน
+    if (!sharedInputs.start_date || sharedInputs.start_date.trim() === "") {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณาระบุวันที่เริ่มต้นผ่อน",
+        text: "วันที่เริ่มต้นผ่อนเป็นข้อมูลจำเป็น กรุณาระบุวันที่ก่อนคำนวณ",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#6366f1",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // ตรวจสอบรูปแบบวันที่ (YYYY-MM-DD)
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!datePattern.test(sharedInputs.start_date)) {
+      Swal.fire({
+        icon: "warning",
+        title: "รูปแบบวันที่ไม่ถูกต้อง",
+        text: "กรุณาใช้ date picker เพื่อเลือกวันที่",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#f59e0b",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // ตรวจสอบความถูกต้องของวันที่
+    const dateParts = sharedInputs.start_date.split("-");
+    const year = parseInt(dateParts[0]);
+    const month = parseInt(dateParts[1]);
+    const day = parseInt(dateParts[2]);
+
+    if (month < 1 || month > 12) {
+      Swal.fire({
+        icon: "error",
+        title: "เดือนไม่ถูกต้อง",
+        text: "เดือนต้องอยู่ระหว่าง 1-12",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#ef4444",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (day < 1 || day > 31) {
+      Swal.fire({
+        icon: "error",
+        title: "วันที่ไม่ถูกต้อง",
+        text: "วันที่ต้องอยู่ระหว่าง 1-31",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#ef4444",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // ตรวจสอบปี ไม่ควรเกินเกิน
+    const currentYear = new Date().getFullYear();
+    if (year < currentYear - 100 || year > currentYear + 100) {
+      Swal.fire({
+        icon: "warning",
+        title: "ปีที่เลือกไม่เหมาะสม",
+        text: "กรุณาเลือกปีที่ใกล้เคียาปีปัจจุบัน",
+        confirmButtonText: "ตกลง",
+        confirmButtonColor: "#f59e0b",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     // ล้างข้อมูลเก่า
     setBanks((prev) =>
       prev.map((bank) => ({
@@ -246,9 +317,9 @@ const App = () => {
       }))
     );
 
-    const dateParts = sharedInputs.start_date.split("-");
-    const startYear = parseInt(dateParts[0]) + 543;
-    const startMonth = parseInt(dateParts[1]);
+    // แปลงวันที่จาก YYYY-MM-DD เป็น พ.ศ.
+    const startYear = year + 543; // แปลงเป็นพ.ศ.
+    const startMonth = month;
 
     try {
       const results = await Promise.all(
@@ -756,7 +827,7 @@ const App = () => {
                           target: { name: "start_date", value, type: "text" },
                         });
                       }}
-                      helperText="จำเป็นต้องระบุ (รูปแบบ DD/MM/YYYY เช่น 01/01/2025)"
+                      helperText="จำเป็นต้องระบุ (เลือกจากปฏิทิน)"
                       color="purple"
                       required
                     />
