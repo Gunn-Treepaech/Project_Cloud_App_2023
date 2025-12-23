@@ -533,11 +533,12 @@ const App = () => {
 
     if (result.isConfirmed) {
       // Reset shared inputs to default values
-      const today = new Date();
+      // const today = new Date();
       setSharedInputs({
         initial_loan: "",
         monthly_payment: "",
-        start_date: today.toISOString().substring(0, 10),
+        // start_date: today.toISOString().substring(0, 10),
+        start_date: "",
       });
 
       // Reset banks to initial state with one empty bank
