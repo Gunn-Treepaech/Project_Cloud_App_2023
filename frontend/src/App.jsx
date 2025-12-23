@@ -954,27 +954,40 @@ const App = () => {
 
               {/* Comparison Table */}
               <div className="mb-8">
-                <div className="card bg-white shadow-xl border border-gray-100 rounded-2xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-4">
-                    <h3 className="text-xl font-bold flex items-center gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                        />
-                      </svg>
-                      ตารางเปรียบเทียบรายละเอียด
-                    </h3>
+                <div className="card bg-white shadow-2xl border-2 border-indigo-100 rounded-3xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white px-8 py-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold">ตารางเปรียบเทียบรายละเอียด</h3>
+                          <p className="text-indigo-100 text-sm mt-0.5">เปรียบเทียบเงื่อนไขและดอกเบี้ยของแต่ละธนาคาร</p>
+                        </div>
+                      </div>
+                      <div className="hidden sm:flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm font-medium">{banks.filter(b => b.schedule && b.schedule.length > 0).length} ธนาคาร</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 bg-gradient-to-br from-white to-indigo-50/30">
                     <ComparisonTable banks={banksWithLabels} />
                   </div>
                 </div>

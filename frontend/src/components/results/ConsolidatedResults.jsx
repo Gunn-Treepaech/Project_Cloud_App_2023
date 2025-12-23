@@ -151,18 +151,18 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
     banksWithResults[selectedBankIndex] || banksWithResults[0];
 
   // Calculate totals for all banks
-  const totalPrincipal = banksWithResults.reduce(
-    (sum, bank) => sum + bank.summary.total_principal,
-    0
-  );
-  const totalInterest = banksWithResults.reduce(
-    (sum, bank) => sum + bank.summary.total_interest,
-    0
-  );
-  const totalBalance = banksWithResults.reduce(
-    (sum, bank) => sum + bank.summary.remaining_balance,
-    0
-  );
+  // const totalPrincipal = banksWithResults.reduce(
+  //   (sum, bank) => sum + bank.summary.total_principal,
+  //   0
+  // );
+  // const totalInterest = banksWithResults.reduce(
+  //   (sum, bank) => sum + bank.summary.total_interest,
+  //   0
+  // );
+  // const totalBalance = banksWithResults.reduce(
+  //   (sum, bank) => sum + bank.summary.remaining_balance,
+  //   0
+  // );
 
   return (
     <div className="space-y-8">
@@ -311,7 +311,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
         </div>
 
         {/* Total Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <SummaryCard
             title="รวมเงินต้นที่ตัดได้"
             amount={totalPrincipal}
@@ -360,7 +360,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
               </svg>
             }
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Component 2: Payment Schedule Table */}

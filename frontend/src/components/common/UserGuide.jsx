@@ -33,7 +33,7 @@ const UserGuide = ({ open, onClose }) => {
       }}>
         {/* Header */}
         <Box sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
           color: 'white',
           p: 3,
           display: 'flex',
@@ -128,8 +128,8 @@ const UserGuide = ({ open, onClose }) => {
                   </li>
                 </Box>
 
-                <Box sx={{ mt: 3, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
-                  <Typography variant="body2" color="warning.dark">
+                <Box sx={{ mt: 3, p: 2, bgcolor: '#fef3c7', borderRadius: 1, border: '1px solid #f59e0b' }}>
+                  <Typography variant="body2" sx={{ color: '#78350f' }}>
                     <strong>💡 เคล็ดลับ:</strong> สามารถเปรียบเทียบได้สูงสุด 4 ธนาคารพร้อมกัน เพื่อดูข้อเสนอที่ดีที่สุด!
                   </Typography>
                 </Box>
@@ -198,9 +198,9 @@ const UserGuide = ({ open, onClose }) => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
-                  <Chip label="36 งวดแรก = 3 ปีแรก" size="small" color="primary" variant="outlined" />
-                  <Chip label="ดอกเบี้ยค่อยๆ ลดลง" size="small" color="secondary" variant="outlined" />
-                  <Chip label="เงินต้นค่อยๆ เพิ่มขึ้น" size="small" color="success" variant="outlined" />
+                  <Chip label="36 งวดแรก = 3 ปีแรก" size="small" sx={{ bgcolor: '#dbeafe', color: '#1e3a8a', border: '1px solid #3b82f6' }} />
+                  <Chip label="ดอกเบี้ยค่อยๆ ลดลง" size="small" sx={{ bgcolor: '#fce7f3', color: '#9f1239', border: '1px solid #ec4899' }} />
+                  <Chip label="เงินต้นค่อยๆ เพิ่มขึ้น" size="small" sx={{ bgcolor: '#d1fae5', color: '#065f46', border: '1px solid #10b981' }} />
                 </Box>
               </Box>
             </AccordionDetails>
@@ -237,8 +237,8 @@ const UserGuide = ({ open, onClose }) => {
                   </li>
                 </Box>
 
-                <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
-                  <Typography variant="body2" color="info.dark">
+                <Box sx={{ mt: 3, p: 2, bgcolor: '#dbeafe', borderRadius: 1, border: '1px solid #3b82f6' }}>
+                  <Typography variant="body2" sx={{ color: '#1e3a8a' }}>
                     <strong>📌 คำแนะนำ:</strong> ไม่ใช่ดอกเบี้ยต่ำสุดเสมอที่ดีที่สุด ให้พิจารณาความพร้อมในการผ่อนชำระและเงื่อนไขอื่นๆ ด้วย
                   </Typography>
                 </Box>
@@ -261,33 +261,33 @@ const UserGuide = ({ open, onClose }) => {
                 </Typography>
 
                 <Box sx={{ display: 'grid', gap: 2 }}>
-                  <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
-                    <Typography variant="subtitle2" fontWeight="bold" color="primary">
+                  <Box sx={{ p: 2, bgcolor: '#ecfdf5', borderRadius: 1, border: '1px solid #10b981' }}>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#065f46' }}>
                       💰 การวางแผนการเงิน
                     </Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ mt: 1, color: '#047857' }}>
                       - เงินผ่อนไม่ควรเกิน 30-40% ของรายได้<br/>
                       - เตรียมเงินสำรอง 3-6 เดือน<br/>
                       - คำนวณค่าใช้จ่ายอื่นๆ ที่เกี่ยวข้องกับบ้าน
                     </Typography>
                   </Box>
 
-                  <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
-                    <Typography variant="subtitle2" fontWeight="bold" color="primary">
+                  <Box sx={{ p: 2, bgcolor: '#eff6ff', borderRadius: 1, border: '1px solid #3b82f6' }}>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#1e40af' }}>
                       📅 การเลือกวันเริ่มผ่อน
                     </Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ mt: 1, color: '#1e3a8a' }}>
                       - ควรเริ่มผ่อนหลังได้รับเงินโอน 1-2 เดือน<br/>
                       - หลีกเลี่ยงการเริ่มผ่อนในช่วงที่รายได้ไม่แน่นอน<br/>
                       - วันที่เริ่มผ่อนส่งผลต่อการคำนวณดอกเบี้ย
                     </Typography>
                   </Box>
 
-                  <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
-                    <Typography variant="subtitle2" fontWeight="bold" color="primary">
+                  <Box sx={{ p: 2, bgcolor: '#faf5ff', borderRadius: 1, border: '1px solid #a855f7' }}>
+                    <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#7e22ce' }}>
                       🔄 การรีเซ็ตข้อมูล
                     </Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ mt: 1, color: '#6b21a8' }}>
                       - ใช้ปุ่ม "รีเซ็ตข้อมูล" เพื่อเริ่มต้นใหม่<br/>
                       - ข้อมูลทั้งหมดจะถูกล้างพร้อมกัน<br/>
                       - เหมาะสำหรับการทดสอบสถานการณ์ต่างๆ
