@@ -55,7 +55,12 @@ const App = () => {
     const { name, value, type } = e.target;
     setSharedInputs((prev) => ({
       ...prev,
-      [name]: type === "number" ? parseFloat(value) : value,
+      [name]:
+        type === "number"
+          ? (value === "" || value === null || value === undefined
+              ? ""
+              : parseFloat(value))
+          : value,
     }));
   };
 
@@ -708,7 +713,7 @@ const App = () => {
                           target: {
                             name: "initial_loan",
                             value: value,
-                            type: "number",
+                            type: "text",
                           },
                         });
                       }}
@@ -731,7 +736,7 @@ const App = () => {
                           target: {
                             name: "monthly_payment",
                             value: value,
-                            type: "number",
+                            type: "text",
                           },
                         });
                       }}
