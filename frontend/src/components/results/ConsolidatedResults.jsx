@@ -6,96 +6,125 @@ import { THAI_BANKS } from "../../constants";
 
 // Custom Bank Select Component
 const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const selectRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef(null);
 
-    const selectedBank = banks[selectedIndex];
-    const thaiBankName = THAI_BANKS.find(b => b.value === selectedBank.bank)?.label?.replace(/^\d+\.\s*/, "") || selectedBank.bank;
+  const selectedBank = banks[selectedIndex];
+  const thaiBankName =
+    THAI_BANKS.find((b) => b.value === selectedBank.bank)?.label?.replace(
+      /^\d+\.\s*/,
+      ""
+    ) || selectedBank.bank;
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (selectRef.current && !selectRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    return (
-        <div ref={selectRef} className="relative">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-white/95 backdrop-blur-sm text-gray-800 border-0 shadow-lg rounded-xl px-4 py-2.5 pr-10 min-w-[240px] font-medium cursor-pointer hover:shadow-xl hover:bg-white focus:ring-2 focus:ring-white/50 transition-all duration-200 text-left"
-            >
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
-                            {selectedIndex + 1}
-                        </div>
-                        <div className="font-semibold text-gray-900">{thaiBankName}</div>
-                    </div>
-                    <svg
-                        className={`w-5 h-5 text-indigo-600 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </button>
-
-            {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
-                    <div className="py-1 max-h-64 overflow-y-auto">
-                        {banks.map((bank, index) => {
-                            const bankThaiName = THAI_BANKS.find(b => b.value === bank.bank)?.label?.replace(/^\d+\.\s*/, "") || bank.bank;
-                            const isSelected = index === selectedIndex;
-                            return (
-                                <button
-                                    key={bank.originalIndex}
-                                    onClick={() => {
-                                        onChange(index);
-                                        setIsOpen(false);
-                                    }}
-                                    className={`w-full px-4 py-3 text-left transition-all duration-150 ${
-                                        isSelected
-                                            ? 'bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-indigo-600'
-                                            : 'hover:bg-gray-50 border-l-4 border-transparent'
-                                    }`}
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3 flex-1">
-                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-md flex-shrink-0 ${
-                                                isSelected
-                                                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white'
-                                                    : 'bg-gray-200 text-gray-600'
-                                            }`}>
-                                                {index + 1}
-                                            </div>
-                                            <div className={`font-semibold text-sm ${isSelected ? 'text-indigo-700' : 'text-gray-800'}`}>
-                                                {bankThaiName}
-                                            </div>
-                                        </div>
-                                        {isSelected && (
-                                            <div className="ml-3 flex-shrink-0">
-                                                <svg className="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+  return (
+    <div ref={selectRef} className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-white/95 backdrop-blur-sm text-gray-800 border-0 shadow-lg rounded-xl px-4 py-2.5 pr-10 min-w-[240px] font-medium cursor-pointer hover:shadow-xl hover:bg-white focus:ring-2 focus:ring-white/50 transition-all duration-200 text-left"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+              {selectedIndex + 1}
+            </div>
+            <div className="font-semibold text-gray-900">{thaiBankName}</div>
+          </div>
+          <svg
+            className={`w-5 h-5 text-indigo-600 transition-transform duration-200 flex-shrink-0 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
         </div>
-    );
+      </button>
+
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+          <div className="py-1 max-h-64 overflow-y-auto">
+            {banks.map((bank, index) => {
+              const bankThaiName =
+                THAI_BANKS.find((b) => b.value === bank.bank)?.label?.replace(
+                  /^\d+\.\s*/,
+                  ""
+                ) || bank.bank;
+              const isSelected = index === selectedIndex;
+              return (
+                <button
+                  key={bank.originalIndex}
+                  onClick={() => {
+                    onChange(index);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full px-4 py-3 text-left transition-all duration-150 ${
+                    isSelected
+                      ? "bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-indigo-600"
+                      : "hover:bg-gray-50 border-l-4 border-transparent"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-md flex-shrink-0 ${
+                          isSelected
+                            ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
+                      <div
+                        className={`font-semibold text-sm ${
+                          isSelected ? "text-indigo-700" : "text-gray-800"
+                        }`}
+                      >
+                        {bankThaiName}
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <div className="ml-3 flex-shrink-0">
+                        <svg
+                          className="w-5 h-5 text-indigo-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 const ConsolidatedResults = ({ banks, monthly_payment }) => {
@@ -103,9 +132,10 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
   const [selectedBankIndex, setSelectedBankIndex] = useState(0);
 
   // Convert monthly_payment to number for proper display
-  const monthlyPaymentNumber = typeof monthly_payment === 'string'
-    ? parseFloat(monthly_payment) || 0
-    : (monthly_payment || 0);
+  const monthlyPaymentNumber =
+    typeof monthly_payment === "string"
+      ? parseFloat(monthly_payment) || 0
+      : monthly_payment || 0;
 
   // Filter banks with results and sort by their order in the banks array (1, 2, 3, ...)
   const banksWithResults = banks
@@ -145,7 +175,15 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
         {/* Bank-wise Summary with Percentages */}
         <div className="mb-8">
           {/* Responsive Grid: 1 col mobile, 2 col tablet, 4 col desktop */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6"> */}
+          <div
+            className="
+    grid
+    gap-4 lg:gap-6
+    justify-center
+    [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]
+  "
+          >
             {banksWithResults.map((bank, index) => {
               const bankLabel =
                 THAI_BANKS.find((b) => b.value === bank.bank)?.label?.replace(
@@ -167,10 +205,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                   : 50;
 
               return (
-                <div
-                  key={index}
-                  className="w-full"
-                >
+                <div key={index} className="w-full max-w-sm">
                   <div className="card h-full shadow-lg bg-white rounded-xl border border-gray-200 hover:shadow-xl transition-shadow duration-200">
                     <div className="card-body p-4 lg:p-5">
                       {/* Bank Header */}
@@ -371,7 +406,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                   onClick={() => setShowAll(!showAll)}
                   className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition flex items-center gap-2"
                 >
-                  {showAll ? "แสดง 5 งวดแรก" : "แสดงทั้งหมด"}
+                  {showAll ? "แสดง 10 งวดแรก" : "แสดงทั้งหมด"}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4"
@@ -379,12 +414,6 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    {/* <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    /> */}
                   </svg>
                 </button>
               </div>

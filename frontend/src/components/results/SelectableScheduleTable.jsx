@@ -212,14 +212,14 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
                             </svg>
                             <span className="text-sm font-medium text-gray-600">ตารางกำหนดการผ่อนชำระ</span>
                             {!showAll && (
-                                <span className="text-xs text-gray-500">(แสดง 5 รายการแรก)</span>
+                                <span className="text-xs text-gray-500">(แสดง 10 รายการแรก)</span>
                             )}
                         </div>
                     </div>
                     <div className="overflow-hidden">
                         <ScheduleTable
                             schedule={selectedBank.schedule}
-                            displaySchedule={showAll ? selectedBank.schedule : selectedBank.schedule.slice(0, 5)}
+                            displaySchedule={showAll ? selectedBank.schedule : selectedBank.schedule.slice(0, 10)}
                             showAll={showAll}
                             setShowAll={setShowAll}
                             monthly_payment={monthlyPaymentNumber}

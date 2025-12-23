@@ -40,13 +40,13 @@ const ScheduleTable = ({
                     </tbody>
                 </table>
             </div>
-            {schedule.length > 5 && (
+            {schedule.length > 10 && (
                 <div className="text-center mt-4">
-                    <button 
+                    <button
                         className="btn btn-sm btn-ghost text-blue-600"
                         onClick={() => setShowAll(!showAll)}
                     >
-                        {showAll ? 'แสดง 5 งวดแรก' : 'ดูทั้งหมด'}
+                        {showAll ? 'แสดง 10 งวดแรก' : 'ดูทั้งหมด'}
                     </button>
                 </div>
             )}
