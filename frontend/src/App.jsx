@@ -511,6 +511,48 @@ const App = () => {
         <div className="bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center">
+              {/* Main Icon */}
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  {/* Background Circle */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full blur-2xl opacity-20 transform scale-110"></div>
+                  {/* Icon Container */}
+                  <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center shadow-2xl">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-10 w-10 sm:h-12 sm:w-12 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+                    {/* Small calculator badge */}
+                    <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shadow-lg border-2 border-white">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 คำนวณสินเชื่อบ้าน
                 <span className="block text-blue-600 mt-2">
@@ -522,48 +564,85 @@ const App = () => {
                 ของธนาคารชั้นนำ
                 วางแผนการเงินของคุณอย่างมั่นใจและตัดสินใจได้อย่างชาญฉลาด
               </p>
-              <div className="mt-8 flex justify-center space-x-4">
-                <div className="flex items-center text-sm text-gray-500">
-                  <svg
-                    className="w-4 h-4 mr-1 text-green-500"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  แม่นยำ
+              <div className="mt-8 flex justify-center flex-wrap gap-3 sm:gap-4">
+                {/* Feature 1: แม่นยำ */}
+                <div className="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-gray-100">
+                  <div className="bg-emerald-100 rounded-full p-1 mr-2">
+                    <svg
+                      className="w-4 h-4 text-emerald-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">แม่นยำ</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <svg
-                    className="w-4 h-4 mr-1 text-green-500"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  รวดเร็ว
+
+                {/* Feature 2: รวดเร็ว */}
+                <div className="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-gray-100">
+                  <div className="bg-blue-100 rounded-full p-1 mr-2">
+                    <svg
+                      className="w-4 h-4 text-blue-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">รวดเร็ว</span>
                 </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <svg
-                    className="w-4 h-4 mr-1 text-green-500"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  ฟรี
+
+                {/* Feature 3: ฟรี */}
+                <div className="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-gray-100">
+                  <div className="bg-purple-100 rounded-full p-1 mr-2">
+                    <svg
+                      className="w-4 h-4 text-purple-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">ฟรี</span>
+                </div>
+
+                {/* Feature 4: เปรียบเทียบได้ */}
+                <div className="flex items-center px-3 py-1.5 bg-white rounded-full shadow-sm border border-gray-100">
+                  <div className="bg-orange-100 rounded-full p-1 mr-2">
+                    <svg
+                      className="w-4 h-4 text-orange-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">เปรียบเทียบได้</span>
                 </div>
               </div>
             </div>
