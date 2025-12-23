@@ -86,7 +86,9 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                             ดอกเบี้ย {bank.fixed_interest}%
                           </span>
                           <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded">
-                            {bank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `Fixed ${bank.fixed_year}ปี`}
+                            {bank.fixed_year === 0
+                              ? "ดอกเบี้ยลอยตลอด"
+                              : `Fixed ${bank.fixed_year}ปี`}
                           </span>
                         </div>
                       </div>
@@ -139,20 +141,32 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                         </div>
                       </div>
 
-                      {/* Discount */}
-                      {(bank.chang_interest_discount1 ||
-                        bank.chang_interest_discount2) && (
-                        <div className="text-xs text-gray-500 mt-3 pt-3 border-t flex justify-center gap-2">
-                          {bank.chang_interest_discount1 && (
-                            <span className="bg-orange-50 text-orange-600 px-2 py-1 rounded">
-                              ลดปี2 {bank.chang_interest_discount1}%
-                            </span>
-                          )}
-                          {bank.chang_interest_discount2 && (
-                            <span className="bg-red-50 text-red-600 px-2 py-1 rounded">
-                              ลดปี3+ {bank.chang_interest_discount2}%
-                            </span>
-                          )}
+                      {/* Interest Discount */}
+                      {(bank.chang_interest_discount1 !== null ||
+                        bank.chang_interest_discount2 !== null) && (
+                        <div className="text-xs text-gray-500 mt-3 pt-3 border-t text-center">
+                          <div className="flex justify-center gap-2">
+                            {bank.chang_interest_discount1 > 0 && (
+                              <span className="bg-orange-50 text-orange-600 px-2 py-1 rounded">
+                                ปีที่ 2 ลดดอกเบี้ย{" "}
+                                {bank.chang_interest_discount1}%
+                              </span>
+                            )}
+
+                            {bank.chang_interest_discount2 > 0 && (
+                              <span className="bg-red-50 text-red-600 px-2 py-1 rounded">
+                                ปีที่ 3 ขึ้นไป ลดดอกเบี้ย{" "}
+                                {bank.chang_interest_discount2}%
+                              </span>
+                            )}
+
+                            {bank.chang_interest_discount1 === 0 &&
+                              bank.chang_interest_discount2 === 0 && (
+                                <span className="bg-gray-50 text-gray-600 px-2 py-1 rounded">
+                                  ไม่มีส่วนลดดอกเบี้ย
+                                </span>
+                              )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -281,12 +295,12 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path
+                    {/* <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
                       d="M19 9l-7 7-7-7"
-                    />
+                    /> */}
                   </svg>
                 </button>
               </div>
@@ -310,7 +324,9 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                         ดอกเบี้ย {selectedBank.fixed_interest}%
                       </span>
                       <span className="bg-purple-100/20 text-purple-100 px-2 py-1 rounded">
-                        {selectedBank.fixed_year === 0 ? 'ดอกเบี้ยลอยตลอด' : `Fixed ${selectedBank.fixed_year}ปี`}
+                        {selectedBank.fixed_year === 0
+                          ? "ดอกเบี้ยลอยตลอด"
+                          : `Fixed ${selectedBank.fixed_year}ปี`}
                       </span>
                     </div>
                   </div>

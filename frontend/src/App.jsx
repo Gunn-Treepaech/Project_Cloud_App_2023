@@ -25,8 +25,8 @@ const App = () => {
 
   // Shared inputs (ใช้ร่วมกันทุกธนาคาร)
   const [sharedInputs, setSharedInputs] = useState({
-    initial_loan: 0,
-    monthly_payment: 0,
+    initial_loan: "",
+    monthly_payment: "",
     start_date: today.toISOString().substring(0, 10), // YYYY-MM-DD
   });
 
@@ -117,7 +117,7 @@ const App = () => {
 
   const calculateAllMortgages = useCallback(async () => {
     // Validate inputs first
-    if (sharedInputs.initial_loan <= 0) {
+    if (!sharedInputs.initial_loan || sharedInputs.initial_loan <= 0) {
       Swal.fire({
         icon: "warning",
         title: "กรุณากรอกข้อมูล",
@@ -128,7 +128,7 @@ const App = () => {
       return;
     }
 
-    if (sharedInputs.monthly_payment <= 0) {
+    if (!sharedInputs.monthly_payment || sharedInputs.monthly_payment <= 0) {
       Swal.fire({
         icon: "warning",
         title: "กรุณากรอกข้อมูล",
@@ -294,6 +294,7 @@ const App = () => {
       const updatedBanks = [...banks];
       let successCount = 0;
       let errorCount = 0;
+      const errorDetails = []; // เก็บรายละเอียด error ทั้งหมด
 
       results.forEach((result) => {
         if (result.data) {
@@ -332,6 +333,9 @@ const App = () => {
             error: result.error,
           };
           errorCount++;
+          // เก็บรายละเอียด error พร้อมชื่อธนาคาร
+          const bankName = THAI_BANKS.find(b => b.value === banks[result.index].bank)?.label || banks[result.index].bank;
+          errorDetails.push(`${bankName}: ${result.error}`);
         }
       });
 
@@ -354,19 +358,43 @@ const App = () => {
           Swal.fire({
             icon: "warning",
             title: "คำนวณเสร็จสิ้น (มีข้อผิดพลาดบางส่วน)",
-            html: `คำนวณสำเร็จ ${successCount} ธนาคาร<br>เกิดข้อผิดพลาด ${errorCount} ธนาคาร`,
+            html: `คำนวณสำเร็จ ${successCount} ธนาคาร<br>เกิดข้อผิดพลาด ${errorCount} ธนาคาร<br><br>
+                   <div style="text-align: left; background: #fff3cd; padding: 10px; border-radius: 5px; font-size: 12px;">
+                     <strong>รายละเอียดข้อผิดพลาด:</strong><br>
+                     ${errorDetails.join('<br>')}
+                   </div>`,
             confirmButtonText: "ดูผลลัพธ์",
             confirmButtonColor: "#f59e0b",
           });
         }
       } else if (successCount === 0 && errorCount > 0) {
-        // All calculations failed
+        // All calculations failed - check if it's connection error
+        const firstError = errorDetails[0] || '';
+        const isConnectionError =
+          firstError.includes("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้") ||
+          firstError.includes("การเชื่อมต่อหมดเวลา") ||
+          firstError.includes("Failed to fetch") ||
+          firstError.includes("NetworkError");
+
         Swal.fire({
-          icon: "error",
-          title: "คำนวณล้มเหลวทั้งหมด",
-          text: "ไม่สามารถคำนวณสินเชื่อได้สำหรับธนาคารที่เลือกทั้งหมด กรุณาตรวจสอบข้อมูลและลองใหม่",
+          icon: isConnectionError ? "warning" : "error",
+          title: isConnectionError ? "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์" : "คำนวณล้มเหลวทั้งหมด",
+          html: isConnectionError
+            ? `กรุณาตรวจสอบ:<br>
+               <div style="text-align: left; display: inline-block; margin-top: 10px;">
+                 1. เซิร์ฟเวอร์ backend ทำงานอยู่หรือไม่<br>
+                 2. อินเทอร์เน็ตเชื่อมต่ออยู่หรือไม่<br>
+                 3. URL เซิร์ฟเวอร์ถูกต้องหรือไม่<br>
+                 <br>
+                 <small style="color: #666;">รายละเอียด: ${firstError}</small>
+               </div>`
+            : `ไม่สามารถคำนวณสินเชื่อได้สำหรับธนาคารที่เลือกทั้งหมด<br><br>
+               <div style="text-align: left; background: #fee2e2; padding: 10px; border-radius: 5px; font-size: 12px;">
+                 <strong>รายละเอียดข้อผิดพลาด:</strong><br>
+                 ${errorDetails.join('<br>')}
+               </div>`,
           confirmButtonText: "ตกลง",
-          confirmButtonColor: "#ef4444",
+          confirmButtonColor: isConnectionError ? "#f59e0b" : "#ef4444",
         });
       } else {
         // No banks configured at all
@@ -381,12 +409,29 @@ const App = () => {
     } catch (err) {
       console.error("Calculation Error:", err);
       setError(err.message);
+
+      // Check for connection-related errors
+      const isConnectionError =
+        err.message.includes("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้") ||
+        err.message.includes("การเชื่อมต่อหมดเวลา") ||
+        err.message.includes("Failed to fetch") ||
+        err.message.includes("NetworkError");
+
       Swal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "ไม่สามารถคำนวณได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง",
+        icon: isConnectionError ? "warning" : "error",
+        title: isConnectionError ? "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์" : "เกิดข้อผิดพลาด",
+        html: isConnectionError
+          ? `กรุณาตรวจสอบ:<br>
+             <div style="text-align: left; display: inline-block; margin-top: 10px;">
+               1. เซิร์ฟเวอร์ backend ทำงานอยู่หรือไม่<br>
+               2. อินเทอร์เน็ตเชื่อมต่ออยู่หรือไม่<br>
+               3. URL เซิร์ฟเวอร์ถูกต้องหรือไม่<br>
+               <br>
+               <small style="color: #666;">รายละเอียด: ${err.message}</small>
+             </div>`
+          : err.message || "ไม่สามารถคำนวณได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง",
         confirmButtonText: "ตกลง",
-        confirmButtonColor: "#ef4444",
+        confirmButtonColor: isConnectionError ? "#f59e0b" : "#ef4444",
       });
     } finally {
       setIsLoading(false);
@@ -412,8 +457,8 @@ const App = () => {
       // Reset shared inputs to default values
       const today = new Date();
       setSharedInputs({
-        initial_loan: 0,
-        monthly_payment: 0,
+        initial_loan: "",
+        monthly_payment: "",
         start_date: today.toISOString().substring(0, 10),
       });
 
@@ -588,7 +633,7 @@ const App = () => {
                           },
                         });
                       }}
-                      placeholder="3000000.00"
+                      placeholder="3,000,000.00"
                       icon={<AccountBalance />}
                       color="blue"
                       helperText="วงเงินสินเชื่อที่ต้องการกู้"
@@ -610,7 +655,7 @@ const App = () => {
                           },
                         });
                       }}
-                      placeholder="15000.00"
+                      placeholder="15,000.00"
                       icon={<Payments />}
                       color="indigo"
                       helperText="งวดผ่อนชำระต่อเดือนที่ต้องการจ่าย"
@@ -626,7 +671,7 @@ const App = () => {
                           target: { name: "start_date", value, type: "text" },
                         });
                       }}
-                      helperText="วันที่เริ่มต้นชำระเงินผ่อน"
+                      helperText="จำเป็นต้องระบุ (รูปแบบ DD/MM/YYYY เช่น 01/01/2025)"
                       color="purple"
                       required
                     />
@@ -642,7 +687,9 @@ const App = () => {
                   onClick={calculateAllMortgages}
                   disabled={
                     isLoading ||
+                    !sharedInputs.initial_loan ||
                     sharedInputs.initial_loan <= 0 ||
+                    !sharedInputs.monthly_payment ||
                     sharedInputs.monthly_payment <= 0
                   }
                 >

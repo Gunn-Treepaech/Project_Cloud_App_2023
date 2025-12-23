@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import { THAI_BANKS } from "../../constants";
 import apiService from "../../services/apiService";
 import { BeautifulSelect, AppInput, AppSelect } from "../common";
@@ -83,7 +84,22 @@ const BankInputForm = ({
         }
       } catch (err) {
         console.error("Bank data fetch error:", err);
-        alert("ไม่สามารถดึงข้อมูลธนาคารได้: " + err.message);
+        // Reset to default values
+        handleInputChange("bank", "");
+        handleInputChange("MRR", 0);
+        handleInputChange("fixed_interest", 0);
+        handleInputChange("update_MRR", "");
+        handleInputChange("fixed_year", 0);
+        handleInputChange("chang_interest_discount1", 0);
+        handleInputChange("chang_interest_discount2", 0);
+
+        Swal.fire({
+          icon: "warning",
+          title: "ดึงข้อมูลธนาคารไม่สำเร็จ",
+          html: `ไม่สามารถดึงข้อมูลอัตราดอกเบี้ยจากธนาคารได้<br><small style="color: #666;">${err.message}</small><br><br>กรุณาเลือกธนาคารใหม่อีกครั้ง`,
+          confirmButtonText: "ตกลง",
+          confirmButtonColor: "#f59e0b",
+        });
       } finally {
         setIsFetchingBankData(false);
       }
