@@ -178,7 +178,7 @@ const Header = () => {
                                     setShowUserGuide(true);
                                     closeMenu();
                                 }}
-                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 block px-3 py-2 rounded-md text-base font-medium text-left w-full flex items-center gap-2"
+                                className="text-blue-100 hover:text-white hover:bg-blue-800 hover:bg-opacity-50 block px-3 py-2 rounded-md text-base font-medium text-left w-full  items-center gap-2"
                             >
                                 <svg
                                     className="w-4 h-4"
