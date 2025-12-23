@@ -144,7 +144,8 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
 
         {/* Bank-wise Summary with Percentages */}
         <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-6">
+          {/* Responsive Grid: 1 col mobile, 2 col tablet, 4 col desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
             {banksWithResults.map((bank, index) => {
               const bankLabel =
                 THAI_BANKS.find((b) => b.value === bank.bank)?.label?.replace(
@@ -168,48 +169,50 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
               return (
                 <div
                   key={index}
-                  className="flex justify-center w-full sm:w-[48%] lg:w-1/4"
+                  className="w-full"
                 >
-                  <div className="card w-full max-w-[320px] shadow-lg bg-white rounded-xl border border-gray-200">
-                    <div className="card-body p-6">
+                  <div className="card h-full shadow-lg bg-white rounded-xl border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+                    <div className="card-body p-4 lg:p-5">
                       {/* Bank Header */}
-                      <div className="text-center mb-4">
-                        <h3 className="font-bold text-lg text-gray-800 mb-2">
+                      <div className="text-center mb-3">
+                        <h3 className="font-bold text-base lg:text-lg text-gray-800 mb-2 truncate px-1">
                           {bankLabel}
                         </h3>
-                        <div className="flex justify-center gap-2 text-xs flex-wrap">
-                          <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
+                        <div className="flex justify-center gap-1.5 text-xs flex-wrap">
+                          <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                             MRR {bank.MRR}%
                           </span>
-                          <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">
                             ดอกเบี้ย {bank.fixed_interest}%
                           </span>
-                          <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                          <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">
                             {bank.fixed_year === 0
-                              ? "ดอกเบี้ยลอยตลอด"
+                              ? "ดอกเบี้ยลอย"
                               : `Fixed ${bank.fixed_year}ปี`}
                           </span>
                         </div>
                       </div>
 
-                      {/* Pie Chart */}
-                      <div className="flex justify-center mb-4">
-                        <PieChart
-                          principalPercent={principalPercent}
-                          interestPercent={interestPercent}
-                        />
+                      {/* Pie Chart - Responsive sizing */}
+                      <div className="flex justify-center mb-3">
+                        <div className="scale-75 sm:scale-90 lg:scale-100 origin-center">
+                          <PieChart
+                            principalPercent={principalPercent}
+                            interestPercent={interestPercent}
+                          />
+                        </div>
                       </div>
 
                       {/* Percentages */}
-                      <div className="flex justify-center gap-4 mb-3">
+                      <div className="flex justify-center gap-4 lg:gap-6 mb-3">
                         <div className="text-center">
-                          <div className="text-lg font-bold text-blue-600">
+                          <div className="text-base lg:text-lg font-bold text-blue-600">
                             {formatCurrency(principalPercent)}%
                           </div>
                           <div className="text-xs text-gray-600">เงินต้น</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-bold text-yellow-600">
+                          <div className="text-base lg:text-lg font-bold text-yellow-600">
                             {formatCurrency(interestPercent)}%
                           </div>
                           <div className="text-xs text-gray-600">ดอกเบี้ย</div>
@@ -217,24 +220,22 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                       </div>
 
                       {/* Summary */}
-                      <div className="space-y-2 border-t pt-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">เงินต้นที่ตัด:</span>
-                          <span className="font-bold text-blue-600">
+                      <div className="space-y-1.5 border-t pt-2.5">
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-gray-600">เงินต้น:</span>
+                          <span className="font-bold text-blue-600 text-xs sm:text-sm">
                             {formatCurrency(bank.summary.total_principal)}
                           </span>
                         </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">
-                            ดอกเบี้ยที่จ่าย:
-                          </span>
-                          <span className="font-bold text-yellow-600">
+                        <div className="flex justify-between text-xs sm:text-sm">
+                          <span className="text-gray-600">ดอกเบี้ย:</span>
+                          <span className="font-bold text-yellow-600 text-xs sm:text-sm">
                             {formatCurrency(bank.summary.total_interest)}
                           </span>
                         </div>
-                        <div className="flex justify-between text-sm pt-2 border-t">
-                          <span className="text-gray-600">ยอดคงเหลือ:</span>
-                          <span className="font-bold text-green-600">
+                        <div className="flex justify-between text-xs sm:text-sm pt-1.5 border-t">
+                          <span className="text-gray-600">คงเหลือ:</span>
+                          <span className="font-bold text-green-600 text-xs sm:text-sm">
                             {formatCurrency(bank.summary.remaining_balance)}
                           </span>
                         </div>
@@ -243,26 +244,24 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                       {/* Interest Discount */}
                       {(bank.chang_interest_discount1 !== null ||
                         bank.chang_interest_discount2 !== null) && (
-                        <div className="text-xs text-gray-500 mt-3 pt-3 border-t text-center">
-                          <div className="flex justify-center gap-2">
+                        <div className="text-xs text-gray-500 mt-2.5 pt-2 border-t text-center">
+                          <div className="flex justify-center gap-1.5 flex-wrap">
                             {bank.chang_interest_discount1 > 0 && (
-                              <span className="bg-orange-50 text-orange-600 px-2 py-1 rounded">
-                                ปีที่ 2 ลดดอกเบี้ย{" "}
-                                {bank.chang_interest_discount1}%
+                              <span className="bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded text-xs">
+                                ปี2 -{bank.chang_interest_discount1}%
                               </span>
                             )}
 
                             {bank.chang_interest_discount2 > 0 && (
-                              <span className="bg-red-50 text-red-600 px-2 py-1 rounded">
-                                ปีที่ 3 ขึ้นไป ลดดอกเบี้ย{" "}
-                                {bank.chang_interest_discount2}%
+                              <span className="bg-red-50 text-red-600 px-1.5 py-0.5 rounded text-xs">
+                                ปี3+ -{bank.chang_interest_discount2}%
                               </span>
                             )}
 
                             {bank.chang_interest_discount1 === 0 &&
                               bank.chang_interest_discount2 === 0 && (
-                                <span className="bg-gray-50 text-gray-600 px-2 py-1 rounded">
-                                  ไม่มีส่วนลดดอกเบี้ย
+                                <span className="bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded text-xs">
+                                  ไม่มีส่วนลด
                                 </span>
                               )}
                           </div>
