@@ -1,5 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { THAI_BANKS } from '../../constants';
 import ScheduleTable from '../tables/ScheduleTable';
+
+// Custom Bank Select Component
+const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const selectRef = useRef(null);
+
+    const selectedBank = banks[selectedIndex];
+    const thaiBankName = THAI_BANKS.find(b => b.value === selectedBank.bank)?.label || selectedBank.bank;
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (selectRef.current && !selectRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+        <div ref={selectRef} className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="relative bg-white text-gray-800 border-0 shadow-lg rounded-xl px-4 py-2.5 pr-10 min-w-[220px] font-medium cursor-pointer hover:shadow-xl focus:ring-2 focus:ring-indigo-300 transition-all duration-200 text-left"
+            >
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                            {selectedIndex + 1}
+                        </div>
+                        <div className="font-semibold text-gray-900">{thaiBankName}</div>
+                    </div>
+                    <svg
+                        className={`w-5 h-5 text-indigo-600 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </button>
+
+            {isOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
+                    <div className="py-1 max-h-64 overflow-y-auto">
+                        {banks.map((bank, index) => {
+                            const bankThaiName = THAI_BANKS.find(b => b.value === bank.bank)?.label || bank.bank;
+                            const isSelected = index === selectedIndex;
+                            return (
+                                <button
+                                    key={index}
+                                    onClick={() => {
+                                        onChange(index);
+                                        setIsOpen(false);
+                                    }}
+                                    className={`w-full px-4 py-3 text-left transition-all duration-150 ${
+                                        isSelected
+                                            ? 'bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-indigo-600'
+                                            : 'hover:bg-gray-50 border-l-4 border-transparent'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3 flex-1">
+                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-md flex-shrink-0 ${
+                                                isSelected
+                                                    ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white'
+                                                    : 'bg-gray-200 text-gray-600'
+                                            }`}>
+                                                {index + 1}
+                                            </div>
+                                            <div className={`font-semibold text-sm ${isSelected ? 'text-indigo-700' : 'text-gray-800'}`}>
+                                                {bankThaiName}
+                                            </div>
+                                        </div>
+                                        {isSelected && (
+                                            <div className="ml-3 flex-shrink-0">
+                                                <svg className="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const SelectableScheduleTable = ({ banks, monthly_payment }) => {
     const [selectedBankIndex, setSelectedBankIndex] = useState(0);
@@ -34,28 +129,15 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
                                 <span className="label-text text-indigo-100 text-xs font-medium">เลือกธนาคาร</span>
                             </label>
                             <div className="relative">
-                                <select
-                                    value={selectedBankIndex}
-                                    onChange={(e) => {
-                                        setSelectedBankIndex(parseInt(e.target.value));
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 rounded-xl blur-sm"></div>
+                                <CustomBankSelect
+                                    banks={banksWithResults}
+                                    selectedIndex={selectedBankIndex}
+                                    onChange={(index) => {
+                                        setSelectedBankIndex(index);
                                         setShowAll(false);
                                     }}
-                                    className="select select-bordered bg-white/10 backdrop-blur-sm text-white border-white/20 focus:border-white/50 focus:bg-white/20 appearance-none pr-10 min-w-[200px]"
-                                >
-                                    {banksWithResults.map((bank, index) => {
-                                        const bankLabel = bank.bank;
-                                        return (
-                                            <option key={index} value={index} className="text-gray-800">
-                                                ธนาคารที่ {index + 1} - {bankLabel}
-                                            </option>
-                                        );
-                                    })}
-                                </select>
-                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-white/70">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
+                                />
                             </div>
                         </div>
                         {/* <button
