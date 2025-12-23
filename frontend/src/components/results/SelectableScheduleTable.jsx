@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { THAI_BANKS } from '../../constants';
 import ScheduleTable from '../tables/ScheduleTable';
+import { formatCurrency } from '../../utils';
 
 // Custom Bank Select Component
 const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
@@ -101,6 +102,11 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
     const [showAll, setShowAll] = useState(false);
     const banksWithResults = banks.filter(bank => bank.schedule && bank.schedule.length > 0);
 
+    // Convert monthly_payment to number for proper display
+    const monthlyPaymentNumber = typeof monthly_payment === 'string'
+        ? parseFloat(monthly_payment) || 0
+        : (monthly_payment || 0);
+
     if (banksWithResults.length === 0) {
         return null;
     }
@@ -191,7 +197,7 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
                         <div className="text-right">
                             <div className="text-sm text-gray-500">เงินผ่อนต่อเดือน</div>
                             <div className="text-xl font-bold text-gray-800">
-                                {monthly_payment ? monthly_payment.toLocaleString('th-TH') : '0'} บาท
+                                {formatCurrency(monthlyPaymentNumber)} บาท
                             </div>
                         </div>
                     </div>
@@ -216,7 +222,7 @@ const SelectableScheduleTable = ({ banks, monthly_payment }) => {
                             displaySchedule={showAll ? selectedBank.schedule : selectedBank.schedule.slice(0, 5)}
                             showAll={showAll}
                             setShowAll={setShowAll}
-                            monthly_payment={monthly_payment}
+                            monthly_payment={monthlyPaymentNumber}
                         />
                     </div>
                 </div>
