@@ -742,7 +742,7 @@ const App = () => {
 
           {/* Shared Input Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-1 space-y-4">
+            <div className="lg:col-span-1 space-y-4 sticky top-4 self-start">
               {/* Hero Card - Shared Inputs */}
               <div className="card bg-white shadow-lg border border-gray-200">
                 <div className="card-body p-6">
