@@ -624,12 +624,12 @@ const App = () => {
                       name="initial_loan"
                       value={sharedInputs.initial_loan}
                       onChange={(value) => {
-                        // ส่งค่า string ไปตรงๆ เพื่อให้เก็บ "จุด" ไว้ได้ขณะพิมพ์
+                        // Convert to number for proper storage
                         handleSharedInputChange({
                           target: {
                             name: "initial_loan",
-                            value: value, // ห้าม parseFloat ตรงนี้เด็ดขาด
-                            type: "text",
+                            value: value,
+                            type: "number",
                           },
                         });
                       }}
@@ -647,11 +647,12 @@ const App = () => {
                       name="monthly_payment"
                       value={sharedInputs.monthly_payment}
                       onChange={(value) => {
+                        // Convert to number for proper storage
                         handleSharedInputChange({
                           target: {
                             name: "monthly_payment",
-                            value: value, // ส่งค่า string ไปตรงๆ
-                            type: "text",
+                            value: value,
+                            type: "number",
                           },
                         });
                       }}

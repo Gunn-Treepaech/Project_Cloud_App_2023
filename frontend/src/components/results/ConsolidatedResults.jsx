@@ -102,6 +102,11 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
   const [showAll, setShowAll] = useState(false);
   const [selectedBankIndex, setSelectedBankIndex] = useState(0);
 
+  // Convert monthly_payment to number for proper display
+  const monthlyPaymentNumber = typeof monthly_payment === 'string'
+    ? parseFloat(monthly_payment) || 0
+    : (monthly_payment || 0);
+
   // Filter banks with results and sort by their order in the banks array (1, 2, 3, ...)
   const banksWithResults = banks
     .map((bank, index) => ({ ...bank, originalIndex: index }))
@@ -435,7 +440,7 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                 }
                 showAll={showAll}
                 setShowAll={setShowAll}
-                monthly_payment={monthly_payment}
+                monthly_payment={monthlyPaymentNumber}
                 bankLabel={
                   THAI_BANKS.find(
                     (b) => b.value === selectedBank.bank
