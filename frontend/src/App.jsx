@@ -21,13 +21,15 @@ const App = () => {
   // ----------------------------------------------------
   // 1. STATE MANAGEMENT
   // ----------------------------------------------------
-  const today = new Date();
+  // const today = new Date();
 
   // Shared inputs (ใช้ร่วมกันทุกธนาคาร)
   const [sharedInputs, setSharedInputs] = useState({
     initial_loan: "",
     monthly_payment: "",
-    start_date: today.toISOString().substring(0, 10), // YYYY-MM-DD
+    // start_date: today.toISOString().substring(0, 10), // YYYY-MM-DD
+    // start_date เป็นค่าว่างเพื่อให้ถ้าไม่มีการเลือก 
+    start_date: "",
   });
 
   // Bank inputs array (รองรับ 4 ธนาคาร)
