@@ -45,8 +45,8 @@ const ComparisonTable = ({ banks }) => {
                         const interestRatio = bank.summary.total_principal > 0
                             ? (bank.summary.total_interest / bank.summary.total_principal) * 100
                             : 0;
-                        // Use bankLabel if available (for custom banks), otherwise use bank value
-                        const displayLabel = bank.bankLabel || THAI_BANKS.find(b => b.value === bank.bank)?.label?.replace(/^\d+\.\s*/, '') || bank.bank;
+                        // Use bankLabel if available (for custom banks), otherwise use bank value, then remove numbering
+                        const displayLabel = (bank.bankLabel || THAI_BANKS.find(b => b.value === bank.bank)?.label || bank.bank)?.replace(/^\d+\.\s*/, '');
 
                         return (
                             <tr key={bank.originalIndex} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
