@@ -10,7 +10,8 @@ const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
   const selectRef = useRef(null);
 
   const selectedBank = banks[selectedIndex];
-  const thaiBankName =
+  // Use bankLabel if available (for custom banks), otherwise fallback to THAI_BANKS
+  const thaiBankName = selectedBank.bankLabel?.replace(/^\d+\.\s*/, '') ||
     THAI_BANKS.find((b) => b.value === selectedBank.bank)?.label?.replace(
       /^\d+\.\s*/,
       ""
@@ -63,7 +64,8 @@ const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
         <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden">
           <div className="py-1 max-h-64 overflow-y-auto">
             {banks.map((bank, index) => {
-              const bankThaiName =
+              // Use bankLabel if available (for custom banks), otherwise fallback to THAI_BANKS
+              const bankThaiName = bank.bankLabel?.replace(/^\d+\.\s*/, '') ||
                 THAI_BANKS.find((b) => b.value === bank.bank)?.label?.replace(
                   /^\d+\.\s*/,
                   ""
@@ -179,7 +181,8 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
     "
           >
             {banksWithResults.map((bank, index) => {
-              const bankLabel =
+              // Use bankLabel if available (for custom banks), otherwise fallback to THAI_BANKS
+              const bankLabel = bank.bankLabel?.replace(/^\d+\.\s*/, '') ||
                 THAI_BANKS.find((b) => b.value === bank.bank)?.label?.replace(
                   /^\d+\.\s*/,
                   ""
@@ -419,9 +422,10 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center gap-4">
                     <h4 className="font-bold text-lg">
-                      {THAI_BANKS.find(
-                        (b) => b.value === selectedBank.bank
-                      )?.label?.replace(/^\d+\.\s*/, "") || selectedBank.bank}
+                      {selectedBank.bankLabel?.replace(/^\d+\.\s*/, '') ||
+                        THAI_BANKS.find(
+                          (b) => b.value === selectedBank.bank
+                        )?.label?.replace(/^\d+\.\s*/, "") || selectedBank.bank}
                     </h4>
                     <div className="flex gap-2 text-xs">
                       <span className="bg-emerald-100/20 text-emerald-100 px-2 py-1 rounded">
@@ -464,9 +468,10 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                 setShowAll={setShowAll}
                 monthly_payment={monthlyPaymentNumber}
                 bankLabel={
-                  THAI_BANKS.find(
-                    (b) => b.value === selectedBank.bank
-                  )?.label?.replace(/^\d+\.\s*/, "") || selectedBank.bank
+                  selectedBank.bankLabel?.replace(/^\d+\.\s*/, '') ||
+                    THAI_BANKS.find(
+                      (b) => b.value === selectedBank.bank
+                    )?.label?.replace(/^\d+\.\s*/, "") || selectedBank.bank
                 }
               />
             </div>

@@ -13,6 +13,7 @@ const BankInputForm = ({
   canRemove,
 }) => {
   const [isFetchingBankData, setIsFetchingBankData] = useState(false);
+  const [customBankName, setCustomBankName] = useState("");
 
   const handleInputChange = (field, value) => {
     onBankDataChange(index, field, value);
@@ -27,16 +28,29 @@ const BankInputForm = ({
     );
   };
 
+  // Sync custom bank name with bankData
+  React.useEffect(() => {
+    if (bankData.bank === "OTHER" && bankData.customBankName) {
+      setCustomBankName(bankData.customBankName);
+    }
+  }, [bankData.bank, bankData.customBankName]);
+
   const handleBankChange = async (value) => {
     // ✅ เปลี่ยนจาก (e) เป็น (value)
     const newBank = value; // ✅ ใช้ value โดยตรง
     handleInputChange("bank", newBank);
 
+    // Clear custom bank name when switching banks
+    if (newBank !== "OTHER") {
+      setCustomBankName("");
+      handleInputChange("customBankName", "");
+    }
+
     // ถ้าเลือก OTHER ไม่ต้องดึงข้อมูล
     if (newBank === "OTHER") {
       // Set default values for OTHER bank
-      handleInputChange("MRR", 7.3);
-      handleInputChange("fixed_interest", 2.95);
+      handleInputChange("MRR", 0);
+      handleInputChange("fixed_interest", 0);
       handleInputChange("update_MRR", "");
       return;
     }
@@ -262,6 +276,58 @@ const BankInputForm = ({
           />
         </div>
 
+        {/* Custom Bank Name Input (shown when OTHER is selected) */}
+        {isOtherBank && (
+          <div className="mb-4">
+            <AppInput
+              type="text"
+              label="ชื่อธนาคาร"
+              value={customBankName}
+              onChange={(value) => {
+                setCustomBankName(value);
+                handleInputChange("customBankName", value);
+              }}
+              placeholder="ระบุชื่อธนาคาร..."
+              icon={<AccountBalance />}
+              color="orange"
+              helperText="กรอกชื่อธนาคารที่ต้องการคำนวณ"
+              required
+            />
+          </div>
+        )}
+
+        {/* Custom Bank Notice */}
+        {isOtherBank && (
+          <div className="bg-orange-50 rounded-lg p-4 mb-6 border border-orange-200">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-orange-500 rounded-full flex-shrink-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-orange-800 mb-1">
+                  กำหนดค่าอัตราดอกเบี้ยเอง
+                </p>
+                <p className="text-xs text-orange-700">
+                  คุณต้องระบุค่า MRR, ดอกเบี้ยคงที่ และระยะเวลาดอกเบี้ยด้วยตนเอง
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Interest Rates */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <AppInput
@@ -273,8 +339,8 @@ const BankInputForm = ({
             placeholder="0.00"
             icon={<TrendingUp />}
             color="emerald"
-            helperText="อัตราดอกเบี้ยเฉลี่ยปัจจุบัน"
-            required={!isOtherBank}
+            helperText={isOtherBank ? "ระบุอัตราดอกเบี้ยเฉลี่ยของธนาคาร" : "อัตราดอกเบี้ยเฉลี่ยปัจจุบัน"}
+            required={true}
           />
 
           <AppInput
@@ -286,8 +352,8 @@ const BankInputForm = ({
             placeholder="0.00"
             icon={<Percent />}
             color="blue"
-            helperText="ดอกเบี้ยในช่วง Fixed Rate"
-            required={!isOtherBank}
+            helperText={isOtherBank ? "ระบุดอกเบี้ยในช่วง Fixed Rate" : "ดอกเบี้ยในช่วง Fixed Rate"}
+            required={true}
           />
         </div>
 

@@ -5,7 +5,7 @@ export const THAI_BANKS = [
   { label: '2. ธนาคารกรุงไทย (KTB)', value: 'KTB', description: 'อัตราดอกเบี้ย MRR: 7.125%' },
   { label: '3. ธนาคารไทยพาณิชย์ (SCB)', value: 'SCB', description: 'อัตราดอกเบี้ย MRR: 7.125%' },
   { label: '4. ธนาคารยูโอบี (UOB)', value: 'UOB', description: 'อัตราดอกเบี้ย MRR: 6.875%' },
-  // { label: '5. ธนาคารอื่นๆ', value: 'OTHER' }
+  { label: '5. กำหนดเอง (ระบุเอง)', value: 'OTHER', description: 'ระบุชื่อธนาคารและอัตราดอกเบี้ยเอง' }
 ];
 
 // API Configuration

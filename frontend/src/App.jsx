@@ -42,6 +42,7 @@ const App = () => {
       fixed_year: 0,
       chang_interest_discount1: 0,
       chang_interest_discount2: 0,
+      customBankName: "",
       schedule: [],
       summary: { total_principal: 0, total_interest: 0, remaining_balance: 0 },
     },
@@ -105,6 +106,7 @@ const App = () => {
           fixed_year: 0,
           chang_interest_discount1: 0,
           chang_interest_discount2: 0,
+          customBankName: "",
           schedule: [],
           summary: {
             total_principal: 0,
@@ -550,6 +552,7 @@ const App = () => {
         fixed_year: 0,
         chang_interest_discount1: 0,
         chang_interest_discount2: 0,
+        customBankName: "",
         schedule: [],
         summary: { total_principal: 0, total_interest: 0, remaining_balance: 0 },
       }]);
@@ -578,7 +581,9 @@ const App = () => {
   const banksWithLabels = banks.map((bank) => ({
     ...bank,
     bankLabel:
-      THAI_BANKS.find((b) => b.value === bank.bank)?.label || bank.bank,
+      bank.bank === "OTHER"
+        ? (bank.customBankName || "กำหนดเอง")
+        : (THAI_BANKS.find((b) => b.value === bank.bank)?.label || bank.bank),
   }));
 
   return (
@@ -1069,7 +1074,7 @@ const App = () => {
 
               {/* Consolidated Results - All 3 main components in one */}
               <ConsolidatedResults
-                banks={banks}
+                banks={banksWithLabels}
                 monthly_payment={sharedInputs.monthly_payment}
               />
             </div>
