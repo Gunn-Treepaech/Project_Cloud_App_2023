@@ -10,7 +10,7 @@ const ScheduleTable = ({
 }) => (
     <div className="card shadow-lg bg-white rounded-xl border border-gray-200">
         <div className="card-body p-6">
-            <h2 className="card-title text-gray-700">ตารางการชำระเงิน (36 งวด)</h2>
+            <h2 className="card-title text-gray-700">ตารางการชำระเงิน</h2>
             <div className="overflow-x-auto mt-4">
                 <table className="table table-pin-rows w-full text-sm">
                     <thead>

@@ -3,6 +3,7 @@ import { PieChart, SummaryCard } from "../../components";
 import ScheduleTable from "../tables/ScheduleTable";
 import { formatCurrency } from "../../utils";
 import { THAI_BANKS } from "../../constants";
+import { Trophy, TrendingUp, TrendingDown } from "lucide-react";
 
 // Custom Bank Select Component
 const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
@@ -171,7 +172,7 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
       {/* Component 1: Summary Cards - Combined View with Percentages */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          สรุปการชำระเงินทั้งหมด (36 งวด)
+          สรุปการชำระเงินทั้งหมด
         </h2>
 
         {/* Bank-wise Summary with Percentages */}
@@ -190,6 +191,9 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
 
               const totalRepaid =
                 bank.summary.total_principal + bank.summary.total_interest;
+
+              // Calculate total amount paid: number of installments × monthly payment
+              const totalPaidAmount = bank.schedule.length * monthlyPaymentNumber;
 
               const principalPercent =
                 totalRepaid > 0
@@ -238,6 +242,7 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
 
                       {/* ---------- Percent ---------- */}
                       <div className="flex justify-center gap-6 mb-3 min-h-[56px]">
+                        
                         <div className="text-center">
                           <div className="text-lg font-bold text-blue-600">
                             {formatCurrency(principalPercent)}%
@@ -255,6 +260,13 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
 
                       {/* ---------- Summary ---------- */}
                       <div className="space-y-1.5 border-t pt-2.5 text-sm min-h-[96px]">
+                        {/* จำนวนเงินผ่อนทั้งหมด */}
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">จำนวนเงินผ่อนทั้งหมด:</span>
+                          <span className="font-bold text-black">
+                            {formatCurrency(totalPaidAmount)}
+                          </span>
+                        </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">เงินต้น:</span>
                           <span className="font-bold text-blue-600">
@@ -444,35 +456,43 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
                   <div className="text-sm">
                     {/* Calculate balance difference: remaining - initial */}
                     {(() => {
-                      const balanceDifference =
-                        selectedBank.summary.remaining_balance - initialLoan;
+                      const finalRemainingBalance = selectedBank.summary.remaining_balance;
+                      const balanceDifference = finalRemainingBalance - initialLoan;
+                      const isDebtIncreased = finalRemainingBalance > initialLoan;
 
-                      if (balanceDifference === 0) {
+                      if (finalRemainingBalance <= 0) {
+                        // จ่ายหมดแล้ว
                         return (
                           <>
-                            <span className="text-white/80">ไม่เปลี่ยนแปลง:</span>
-                            <span className="font-bold ml-1 text-gray-200">
-                              {formatCurrency(0)} บาท
+                            <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-500 text-white font-semibold text-xs gap-2">
+                              <Trophy className="w-4 h-4" />
+                              ปิดยอดเงินกู้สมบูรณ์
                             </span>
                           </>
                         );
-                      } else if (balanceDifference < 0) {
-                        // Debt decreased - GOOD
+                      } else if (isDebtIncreased) {
+                        // หนี้เพิ่มขึ้น
                         return (
                           <>
-                            <span className="text-white/80">รวมจ่าย:</span>
-                            <span className="font-bold ml-1 text-green-300">
-                              {formatCurrency(Math.abs(balanceDifference))} บาท
+                            <span className="inline-flex items-center px-2 py-1 rounded-lg bg-red-500 text-white font-semibold text-[10px] gap-1">
+                              <TrendingUp className="w-3 h-3" />
+                              ภาระเงินกู้เพิ่มขึ้น :
+                            </span>
+                            <span className="font-bold text-red-500 ml-2">
+                              {formatCurrency(balanceDifference)} บาท
                             </span>
                           </>
                         );
                       } else {
-                        // Debt increased - BAD
+                        // หนี้ลดลง
                         return (
                           <>
-                            <span className="text-white/80">จำนวนเงินเพิ่มขึ้น:</span>
-                            <span className="font-bold ml-1 text-red-300">
-                              {formatCurrency(balanceDifference)} บาท
+                            <span className="inline-flex items-center px-2 py-1 rounded-lg bg-blue-500 text-white font-semibold text-[10px] gap-1">
+                              <TrendingDown className="w-3 h-3" />
+                              ภาระเงินกู้ลดลง :
+                            </span>
+                            <span className="font-bold text-green-500 ml-2">
+                              {formatCurrency(Math.abs(balanceDifference))} บาท
                             </span>
                           </>
                         );

@@ -1,8 +1,9 @@
 import React from "react";
 import { formatCurrency } from "../../utils";
 import { THAI_BANKS } from "../../constants";
+import { Trophy, TrendingUp, TrendingDown } from "lucide-react";
 
-const ComparisonTable = ({ banks, initialLoan }) => {
+const ComparisonTable = ({ banks, initialLoan, monthly_payment }) => {
   if (!banks || banks.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -11,19 +12,10 @@ const ComparisonTable = ({ banks, initialLoan }) => {
     );
   }
 
-  // Filter banks with results and sort by their original order (1, 2, 3, ...)
   const filteredBanks = banks
     .map((bank, index) => ({ ...bank, originalIndex: index }))
     .filter((bank) => bank.summary && bank.schedule && bank.schedule.length > 0)
     .sort((a, b) => a.originalIndex - b.originalIndex);
-
-  if (filteredBanks.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        กรุณาคำนวณข้อมูลธนาคารอย่างน้อย 1 ธนาคาร
-      </div>
-    );
-  }
 
   return (
     <div className="overflow-x-auto">
@@ -33,45 +25,38 @@ const ComparisonTable = ({ banks, initialLoan }) => {
             <th className="text-left">ธนาคาร</th>
             <th className="text-center">MRR (%)</th>
             <th className="text-center">ดอกเบี้ยคงที่ (%)</th>
-            <th className="text-center">Fixed Rate (ปี)</th>
-            <th className="text-right">เงินต้นที่ตัด (36 งวด)</th>
-            <th className="text-right">ดอกเบี้ยที่จ่าย (36 งวด)</th>
-            <th className="text-right">ส่วนต่างยอดคงเหลือ</th>
-            <th className="text-center">% ดอกเบี้ยต่อเงินต้น</th>
+            <th className="text-center">Rate (ปี)</th>
+            <th className="text-right">จำนวนเงินผ่อนทั้งหมด</th>
+            <th className="text-right">เงินต้นที่ตัด</th>
+            <th className="text-right">ดอกเบี้ยที่จ่าย</th>
+            <th className="text-right">ยอดคงเหลือ</th>
+            <th className="text-center min-w-[140px]">สถานะการเงิน</th>
           </tr>
         </thead>
         <tbody>
           {filteredBanks.map((bank, index) => {
-            // const interestRatio =
-            //   bank.summary.total_principal > 0
-            //     ? (bank.summary.total_interest / bank.summary.total_principal) *
-            //       100
-            //     : 0;
-            const interestRatioRaw =
-              bank.summary.total_principal > 0
-                ? (bank.summary.total_interest / bank.summary.total_principal) *
-                  100
-                : 0;
+            const monthlyPaymentNumber =
+              typeof monthly_payment === "string"
+                ? parseFloat(monthly_payment) || 0
+                : monthly_payment || 0;
 
-            // cap แสดงผลไม่เกิน 999% เพื่อไม่ให้ UI แตก
-            const interestRatio = Math.min(interestRatioRaw, 999);
+            const totalPaid = bank.schedule.length * monthlyPaymentNumber;
 
-            // Use bankLabel if available (for custom banks), otherwise use bank value, then remove numbering
+            // --- หัวใจสำคัญของ Logic ที่คุณต้องการ ---
+            // คำนวณส่วนต่างระหว่าง ยอดหนี้คงเหลือสุดท้าย กับ ยอดเงินกู้เริ่มต้น
+            const finalRemainingBalance = bank.summary.remaining_balance;
+            const balanceDifference = finalRemainingBalance - initialLoan;
+
+            // หนี้ลดลง คือ ยอดคงเหลือสุดท้าย น้อยกว่า ยอดเริ่มต้น (ค่า difference จะเป็นลบ)
+            // const isDebtReduced = finalRemainingBalance < initialLoan;
+            // หนี้เพิ่มขึ้น คือ ยอดคงเหลือสุดท้าย มากกว่า ยอดเริ่มต้น (ค่า difference จะเป็นบวก)
+            const isDebtIncreased = finalRemainingBalance > initialLoan;
+
             const displayLabel = (
               bank.bankLabel ||
               THAI_BANKS.find((b) => b.value === bank.bank)?.label ||
               bank.bank
             )?.replace(/^\d+\.\s*/, "");
-
-            // Calculate difference: remaining balance - initial loan
-            const balanceDifference =
-              bank.summary.remaining_balance - initialLoan;
-            const isPaidDown = balanceDifference < 0; // Negative means debt decreased
-            console.log({
-  initialLoan,
-  remaining_balance: bank.summary.remaining_balance,
-  balanceDifference
-});
 
             return (
               <tr
@@ -82,81 +67,80 @@ const ComparisonTable = ({ banks, initialLoan }) => {
                 <td className="text-center">{bank.MRR || 0}</td>
                 <td className="text-center">{bank.fixed_interest || 0}</td>
                 <td className="text-center">{bank.fixed_year || 0}</td>
-                <td className="text-right font-mono">
+                <td className="text-right font-mono text-black">
+                  {formatCurrency(totalPaid)}
+                </td>
+                <td className="text-right font-mono text-blue-700">
                   {formatCurrency(bank.summary.total_principal)}
                 </td>
-                <td className="text-right font-mono text-yellow-600">
+                <td
+                  className="text-right font-mono text-yellow-700"
+                  // style={{ color: "#FBBF24" }}
+                >
                   {formatCurrency(bank.summary.total_interest)}
                 </td>
-                {/* <td className="text-right font-mono">
-                  {balanceDifference === 0 ? (
-                    <span className="text-gray-500">
-                      <div className="text-xs">ไม่เปลี่ยนแปลง</div>
-                      <div className="font-semibold">{formatCurrency(0)}</div>
-                    </span>
-                  ) : isPaidDown ? (
-                    <div className="text-green-600">
-                      <div className="text-xs">หนี้ลด</div>
-                      <div className="font-semibold">
-                        {formatCurrency(Math.abs(balanceDifference))}
-                      </div>
+
+                {/* ช่อง ยอดคงเหลือ: แสดงยอดคงเหลือจริง */}
+                <td className="text-right font-mono">
+                  {formatCurrency(finalRemainingBalance)}
+                </td>
+
+                {/* ช่อง สถานะการเงิน: แสดงจำนวนเงินกู้ที่ลด/เพิ่ม */}
+                {/* <td className="text-center">
+                  {finalRemainingBalance <= 0 ? (
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="badge badge-success text-white">ชำระทั้งหมด</span>
+                    </div>
+                  ) : isDebtIncreased ? (
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-xs text-red-500 font-semibold">
+                        จำนวนเงินกู้ ∧ {formatCurrency(balanceDifference)}
+                      </span>
                     </div>
                   ) : (
-                    <div className="text-red-600">
-                      <div className="text-xs">หนี้เพิ่ม</div>
-                      <div className="font-semibold">
-                        {formatCurrency(balanceDifference)}
-                      </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-xs text-green-600 font-semibold">
+                        จำนวนเงินกู้ ∨ {formatCurrency(Math.abs(balanceDifference))}
+                      </span>
                     </div>
                   )}
                 </td> */}
-                <td className="text-right font-mono">
-                  {balanceDifference === 0 ? (
-                    <div className="text-gray-500">
-                      <div className="text-xs">ไม่เปลี่ยนแปลง</div>
-                      <div className="font-semibold">{formatCurrency(0)}</div>
+                <td className="text-center">
+                  {finalRemainingBalance <= 0 ? (
+                    /* สถานะเมื่อปิดยอดหนี้ได้สำเร็จ */
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="badge badge-success text-white py-3 px-4 font-semibold flex items-center gap-2">
+                        <Trophy className="w-4 h-4" />
+                        ปิดยอดเงินกู้สมบูรณ์
+                      </span>
                     </div>
-                  ) : isPaidDown ? (
-                    <div className="text-green-600">
-                      <div className="text-xs">หนี้ลด</div>
-                      <div className="font-semibold">
-                        {formatCurrency(Math.abs(balanceDifference))}
+                  ) : isDebtIncreased ? (
+                    /* สถานะเมื่อดอกเบี้ยสูงจนยอดกู้เพิ่มขึ้น */
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="badge badge-error text-white text-[10px] px-2 flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" />
+                        ภาระเงินกู้เพิ่มขึ้น
+                      </span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[13px] text-red-600 font-bold">
+                          {formatCurrency(balanceDifference)}
+                        </span>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-red-600">
-                      <div className="text-xs">หนี้เพิ่ม</div>
-                      <div className="font-semibold">
-                        {formatCurrency(balanceDifference)}
+                    /* สถานะปกติเมื่อการผ่อนชำระสามารถลดเงินกู้ลงได้ */
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="badge badge-info text-white text-[10px] px-2 flex items-center gap-1">
+                        <TrendingDown className="w-3 h-3" />
+                        ภาระเงินกู้ลดลง
+                      </span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[13px] text-green-700 font-bold">
+                          {formatCurrency(Math.abs(balanceDifference))}
+                        </span>
                       </div>
                     </div>
                   )}
-                </td>
-
-                <td className="text-center">
-                  {/* <span
-                    className={`badge ${
-                      interestRatio > 50
-                        ? "badge-error"
-                        : interestRatio > 30
-                        ? "badge-warning"
-                        : "badge-success"
-                    }`}
-                  >
-                    {formatCurrency(interestRatio)}%
-                  </span> */}
-                  <span
-                    className={`badge ${
-                      interestRatioRaw > 100
-                        ? "badge-error"
-                        : interestRatioRaw > 50
-                        ? "badge-warning"
-                        : "badge-success"
-                    }`}
-                    title="คำนวณจาก ดอกเบี้ยที่จ่าย ÷ เงินต้นที่ตัดได้"
-                  >
-                    {interestRatio.toFixed(2)}%
-                  </span>
                 </td>
               </tr>
             );

@@ -153,7 +153,7 @@ const UserGuide = ({ open, onClose }) => {
 
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
-                    📊 สรุปการชำระเงินทั้งหมด (36 งวดแรก):
+                    📊 สรุปการชำระเงินทั้งหมด:
                   </Typography>
                   <Box component="ul" sx={{ pl: 2, '& li': { mb: 1 } }}>
                     <Typography component="li" variant="body2">
@@ -198,7 +198,6 @@ const UserGuide = ({ open, onClose }) => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
-                  <Chip label="36 งวดแรก = 3 ปีแรก" size="small" sx={{ bgcolor: '#dbeafe', color: '#1e3a8a', border: '1px solid #3b82f6' }} />
                   <Chip label="ดอกเบี้ยค่อยๆ ลดลง" size="small" sx={{ bgcolor: '#fce7f3', color: '#9f1239', border: '1px solid #ec4899' }} />
                   <Chip label="เงินต้นค่อยๆ เพิ่มขึ้น" size="small" sx={{ bgcolor: '#d1fae5', color: '#065f46', border: '1px solid #10b981' }} />
                 </Box>

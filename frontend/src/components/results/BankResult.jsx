@@ -35,7 +35,7 @@ const BankResult = ({ bank, monthly_payment }) => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <SummaryCard
-          title="เงินต้นที่ตัดได้ (36 งวด)"
+          title="เงินต้นที่ตัดได้"
           amount={bank.summary.total_principal}
           unit="บาท"
           colorClass="bg-blue-100 text-blue-600"
@@ -51,7 +51,7 @@ const BankResult = ({ bank, monthly_payment }) => {
           }
         />
         <SummaryCard
-          title="ดอกเบี้ยที่จ่าย (36 งวด)"
+          title="ดอกเบี้ยที่จ่าย"
           amount={bank.summary.total_interest}
           unit="บาท"
           colorClass="bg-yellow-100 text-yellow-600"
