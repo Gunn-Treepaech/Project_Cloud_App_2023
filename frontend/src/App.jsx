@@ -1067,7 +1067,7 @@ const App = () => {
                     </div>
                   </div>
                   <div className="p-6 bg-gradient-to-br from-white to-indigo-50/30">
-                    <ComparisonTable banks={banksWithLabels} />
+                    <ComparisonTable banks={banksWithLabels} initialLoan={sharedInputs.initial_loan} />
                   </div>
                 </div>
               </div>
@@ -1076,6 +1076,7 @@ const App = () => {
               <ConsolidatedResults
                 banks={banksWithLabels}
                 monthly_payment={sharedInputs.monthly_payment}
+                initialLoan={sharedInputs.initial_loan}
               />
             </div>
           )}

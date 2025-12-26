@@ -129,7 +129,7 @@ const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
   );
 };
 
-const ConsolidatedResults = ({ banks, monthly_payment }) => {
+const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
   const [showAll, setShowAll] = useState(false);
   const [selectedBankIndex, setSelectedBankIndex] = useState(0);
 
@@ -442,14 +442,42 @@ const ConsolidatedResults = ({ banks, monthly_payment }) => {
                     </div>
                   </div>
                   <div className="text-sm">
-                    <span className="text-white/80">รวมจ่าย:</span>
-                    <span className="font-bold ml-1">
-                      {formatCurrency(
-                        selectedBank.summary.total_principal +
-                          selectedBank.summary.total_interest
-                      )}{" "}
-                      บาท
-                    </span>
+                    {/* Calculate balance difference: remaining - initial */}
+                    {(() => {
+                      const balanceDifference =
+                        selectedBank.summary.remaining_balance - initialLoan;
+
+                      if (balanceDifference === 0) {
+                        return (
+                          <>
+                            <span className="text-white/80">ไม่เปลี่ยนแปลง:</span>
+                            <span className="font-bold ml-1 text-gray-200">
+                              {formatCurrency(0)} บาท
+                            </span>
+                          </>
+                        );
+                      } else if (balanceDifference < 0) {
+                        // Debt decreased - GOOD
+                        return (
+                          <>
+                            <span className="text-white/80">รวมจ่าย:</span>
+                            <span className="font-bold ml-1 text-green-300">
+                              {formatCurrency(Math.abs(balanceDifference))} บาท
+                            </span>
+                          </>
+                        );
+                      } else {
+                        // Debt increased - BAD
+                        return (
+                          <>
+                            <span className="text-white/80">จำนวนเงินเพิ่มขึ้น:</span>
+                            <span className="font-bold ml-1 text-red-300">
+                              {formatCurrency(balanceDifference)} บาท
+                            </span>
+                          </>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
               </div>
