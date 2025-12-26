@@ -74,7 +74,7 @@ const ComparisonTable = ({ banks, initialLoan, monthly_payment }) => {
                   {formatCurrency(bank.summary.total_principal)}
                 </td>
                 <td
-                  className="text-right font-mono text-yellow-700"
+                  className="text-right font-mono text-[#FBBF24]"
                   // style={{ color: "#FBBF24" }}
                 >
                   {formatCurrency(bank.summary.total_interest)}

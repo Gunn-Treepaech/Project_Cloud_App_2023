@@ -251,7 +251,7 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
                         </div>
 
                         <div className="text-center">
-                          <div className="text-lg font-bold text-yellow-600">
+                          <div className="text-lg font-bold text-[#FBBF24]">
                             {formatCurrency(interestPercent)}%
                           </div>
                           <div className="text-xs text-gray-600">ดอกเบี้ย</div>
@@ -276,7 +276,7 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
 
                         <div className="flex justify-between">
                           <span className="text-gray-600">ดอกเบี้ย:</span>
-                          <span className="font-bold text-yellow-600">
+                          <span className="font-bold text-[#FBBF24]">
                             {formatCurrency(bank.summary.total_interest)}
                           </span>
                         </div>
