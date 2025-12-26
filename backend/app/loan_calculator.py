@@ -84,19 +84,21 @@ class LoanCalculator:
             interest_money = (remaining_principal * fixed_interest / Decimal('100')) * (Decimal(until_the_day) / Decimal('365'))
             # เงินต้นที่ตัดได้ในงวดนี้
             balance = monthly_payment - interest_money
-            # ถ้าเงินต้นที่ตัดได้ติดลบ ให้เป็น 0
-            if balance <= Decimal('0'):
-                balance = Decimal('0')
-
-            # อัปเดตยอดเงินต้นคงเหลือ
-            if remaining_principal - balance <= Decimal('0'):
-                # งวดสุดท้ายที่จ่ายหมด
-                overpayment = balance - remaining_principal
-                balance = remaining_principal
-                remaining_principal = Decimal('0')
-            else:
+            if balance < Decimal('0'):
+                # กรณีจ่ายไม่พอดอกเบี้ย: ยอดเงินต้นเพิ่มขึ้นตามส่วนต่าง
+                remaining_principal += (-balance)
                 overpayment = Decimal('0')
-                remaining_principal -= balance
+                balance = Decimal('0')
+            else:
+                # อัปเดตยอดเงินต้นคงเหลือ
+                if remaining_principal - balance <= Decimal('0'):
+                    # งวดสุดท้ายที่จ่ายหมด
+                    overpayment = balance - remaining_principal
+                    balance = remaining_principal
+                    remaining_principal = Decimal('0')
+                else:
+                    overpayment = Decimal('0')
+                    remaining_principal -= balance
 
             # สร้างข้อมูลสำหรับแต่ละงวด (ปัดทศนิยม 2 ตำแหน่ง)
             display_result = {
