@@ -835,7 +835,7 @@ const App = () => {
                           target: { name: "start_date", value, type: "text" },
                         });
                       }}
-                      helperText="จำเป็นต้องระบุ (เลือกจากปฏิทิน)"
+                      helperText="วัน/เดือน/ปี (ค.ศ.) ที่เริ่มผ่อนชำระงวดแรก"
                       color="purple"
                       required
                     />

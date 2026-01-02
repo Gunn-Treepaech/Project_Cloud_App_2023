@@ -39,7 +39,7 @@ const MultiChartView = ({ banks }) => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center">
                                             <span className="block w-2 h-2 bg-blue-500 rounded-full mr-1"></span>
-                                            <span className="text-gray-600">เงินต้น</span>
+                                            <span className="text-gray-600">เงินกู้</span>
                                         </div>
                                         <span className="text-gray-600 font-medium">{formatCurrency(principalPercent)}%</span>
                                     </div>

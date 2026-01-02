@@ -102,7 +102,7 @@ const BankResult = ({ bank, monthly_payment }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <span className="block w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                      <span className="text-gray-600 text-sm">เงินต้น</span>
+                      <span className="text-gray-600 text-sm">เงินกู้</span>
                     </div>
                     <span className="text-gray-600 font-medium">
                       {formatCurrency(principalPercent)}%

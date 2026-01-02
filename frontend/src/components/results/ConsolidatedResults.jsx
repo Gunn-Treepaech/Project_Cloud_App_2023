@@ -247,7 +247,7 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
                           <div className="text-lg font-bold text-blue-600">
                             {formatCurrency(principalPercent)}%
                           </div>
-                          <div className="text-xs text-gray-600">เงินต้น</div>
+                          <div className="text-xs text-gray-600">เงินกู้</div>
                         </div>
 
                         <div className="text-center">
@@ -262,20 +262,20 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
                       <div className="space-y-1.5 border-t pt-2.5 text-sm min-h-[96px]">
                         {/* จำนวนเงินผ่อนทั้งหมด */}
                         <div className="flex justify-between">
-                          <span className="text-gray-600">จำนวนเงินผ่อนทั้งหมด:</span>
+                          <span className="text-gray-600">เงินผ่อนทั้งหมด:</span>
                           <span className="font-bold text-black">
                             {formatCurrency(totalPaidAmount)}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">เงินต้น:</span>
+                          <span className="text-gray-600">ชำระเงินกู้:</span>
                           <span className="font-bold text-blue-600">
                             {formatCurrency(bank.summary.total_principal)}
                           </span>
                         </div>
 
                         <div className="flex justify-between">
-                          <span className="text-gray-600">ดอกเบี้ย:</span>
+                          <span className="text-gray-600">ชำระดอกเบี้ย:</span>
                           <span className="font-bold text-[#FBBF24]">
                             {formatCurrency(bank.summary.total_interest)}
                           </span>

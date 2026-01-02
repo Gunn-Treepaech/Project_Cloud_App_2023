@@ -25,10 +25,10 @@ const ComparisonTable = ({ banks, initialLoan, monthly_payment }) => {
             <th className="text-left">ธนาคาร</th>
             <th className="text-center">MRR (%)</th>
             <th className="text-center">ดอกเบี้ยคงที่ (%)</th>
-            <th className="text-center">Rate (ปี)</th>
-            <th className="text-right">จำนวนเงินผ่อนทั้งหมด</th>
-            <th className="text-right">เงินต้นที่ตัด</th>
-            <th className="text-right">ดอกเบี้ยที่จ่าย</th>
+            <th className="text-center">Fixed Rate (ปี)</th>
+            <th className="text-right">เงินผ่อนทั้งหมด</th>
+            <th className="text-right">ชำระเงินกู้</th>
+            <th className="text-right">ชำระดอกเบี้ย</th>
             <th className="text-right">ยอดคงเหลือ</th>
             <th className="text-center min-w-[140px]">สถานะการเงิน</th>
           </tr>

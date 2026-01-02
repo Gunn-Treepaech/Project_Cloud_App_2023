@@ -72,13 +72,13 @@ const UserGuide = ({ open, onClose }) => {
                 </Typography>
                 <Box component="ol" sx={{ pl: 3, '& li': { mb: 1.5 } }}>
                   <li>
-                    <Typography><strong>ระบุวงเงินสินเชื่อ</strong> - กรอกจำนวนเงินที่ต้องการกู้ (เช่น 1,000,000 บาท)</Typography>
+                    <Typography><strong>ระบุวงเงินสินเชื่อ</strong> - กรอกจำนวนเงินกู้ของตนเอง (เช่น 1,000,000 บาท)</Typography>
                   </li>
                   <li>
                     <Typography><strong>ระบุเงินผ่อนต่อเดือน</strong> - กรอกจำนวนเงินที่สามารถผ่อนชำระได้ (เช่น 15,000 บาท)</Typography>
                   </li>
                   <li>
-                    <Typography><strong>เลือกวันที่เริ่มผ่อน</strong> - เลือกวันที่คาดว่าจะเริ่มผ่อนชำระ</Typography>
+                    <Typography><strong>เลือกวันที่เริ่มผ่อน</strong> - เลือกวันที่คาดว่าเริ่มผ่อนชำระ</Typography>
                   </li>
                   <li>
                     <Typography><strong>เลือกธนาคาร</strong> - คลิก "เพิ่มธนาคาร" เพื่อเลือกธนาคารที่ต้องการเปรียบเทียบ</Typography>
@@ -157,16 +157,16 @@ const UserGuide = ({ open, onClose }) => {
                   </Typography>
                   <Box component="ul" sx={{ pl: 2, '& li': { mb: 1 } }}>
                     <Typography component="li" variant="body2">
-                      <strong>เงินต้นที่ตัด:</strong> จำนวนเงินต้นที่ผ่อนชำระไปใน 36 เดือนแรก
+                      <strong>ชำระเงินกู้:</strong> จำนวนเงินที่ผ่อนชำระเงินกู้ไปใน 36 เดือนแรก
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>ดอกเบี้ยที่จ่าย:</strong> ดอกเบี้ยสะสมที่จ่ายไปใน 36 เดือนแรก
+                      <strong>ชำระดอกเบี้ย:</strong> ดอกเบี้ยสะสมที่ชำระไปใน 36 เดือนแรก
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>ยอดคงเหลือ:</strong> เงินต้นที่เหลืออยู่หลังจากผ่อนชำระ 36 เดือนแรก
+                      <strong>ยอดคงเหลือ:</strong> เงินกู้ที่เหลืออยู่หลังจากผ่อนชำระ 36 เดือนแรก
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>เปอร์เซ็นต์:</strong> สัดส่วนระหว่างเงินต้นและดอกเบี้ยในการชำระ
+                      <strong>สถานะการเงิน:</strong> สถานะการชำระเงินกู้ เช่น ภาระเงินกู้ลดลง หรือ ภาระเงินกู้เพิ่มขึ้น
                     </Typography>
                   </Box>
                 </Box>
@@ -180,26 +180,26 @@ const UserGuide = ({ open, onClose }) => {
                       <strong>งวดที่:</strong> ลำดับการผ่อนชำระ (1, 2, 3, ...)
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>วันที่:</strong> วันที่กำหนดชำระในแต่ละงวด
+                      <strong>เดือน/ปี:</strong> เดือนและปีที่กำหนดชำระในแต่ละงวด
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>เงินต้น:</strong> ส่วนของเงินต้นในการผ่อนชำระแต่ละงวด
+                      <strong>จ่ายชำระ:</strong> ยอดเงินผ่อนรวมต่อเดือน
+                    </Typography>
+                    <Typography component="li" variant="body2">
+                      <strong>ชำระเงินกู้:</strong> ส่วนของเงินกู้ในการผ่อนชำระแต่ละงวด
                     </Typography>
                     <Typography component="li" variant="body2">
                       <strong>ดอกเบี้ย:</strong> ดอกเบี้ยที่ต้องจ่ายในแต่ละงวด
                     </Typography>
                     <Typography component="li" variant="body2">
-                      <strong>เงินผ่อน:</strong> ยอดเงินผ่อนรวมต่อเดือน
-                    </Typography>
-                    <Typography component="li" variant="body2">
-                      <strong>ยอดคงเหลือ:</strong> เงินต้นที่เหลืออยู่หลังจากผ่อนชำระในแต่ละงวด
+                      <strong>ยอดคงเหลือ:</strong> เงินกู้ที่เหลืออยู่หลังจากผ่อนชำระในแต่ละงวด
                     </Typography>
                   </Box>
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
                   <Chip label="ดอกเบี้ยค่อยๆ ลดลง" size="small" sx={{ bgcolor: '#fce7f3', color: '#9f1239', border: '1px solid #ec4899' }} />
-                  <Chip label="เงินต้นค่อยๆ เพิ่มขึ้น" size="small" sx={{ bgcolor: '#d1fae5', color: '#065f46', border: '1px solid #10b981' }} />
+                  <Chip label="เงินกู้ค่อยๆ เพิ่มขึ้น" size="small" sx={{ bgcolor: '#d1fae5', color: '#065f46', border: '1px solid #10b981' }} />
                 </Box>
               </Box>
             </AccordionDetails>
