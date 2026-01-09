@@ -1,19 +1,33 @@
 version: '3.8'
 
 services:
-  app:
-    build: ./app
-    links:
-      - db
+  backend:
+    build:
+      context: ./backend
+      dockerfile: app/Dockerfile
     ports:
       - "5000:5000"
+    environment:
+      - DB_HOST=db              ✅ ใช้ชื่อ service ตรง ๆ
+      - DB_PORT=3306
+      - DB_NAME=financial_data
+      - DB_USER=user
+      - DB_PASSWORD=user
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
-      - my-custom-network
+      - mortgage-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
-    image: mysql:latest
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: user
       MYSQL_DATABASE: financial_data
@@ -22,22 +36,41 @@ services:
     ports:
       - "32000:3306"
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
     networks:
-      - my-custom-network
+      - mortgage-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-puser"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password
 
-  front:  # Replace with your desired service name
-    build: ./frontend  # Build the image from the current directory (./)
+  frontend:
+    build: ./frontend
     ports:
-      - "5173:5173"  # Map host port 5173 to container port 5173
-    command: npm run dev  # Override the default command in the Dockerfile
-    links:
-      - app
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://backend:5000   ✅ แก้จาก localhost เป็น backend
     depends_on:
-      - app
+      backend:
+        condition: service_healthy
     networks:
-      - my-custom-network
+      - mortgage-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  mysql_data:
 
 networks:
-  my-custom-network:
+  mortgage-network:
+    driver: bridge

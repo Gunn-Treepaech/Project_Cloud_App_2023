@@ -1,13 +1,12 @@
-# Project Cloud App 2023 : เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน
-  This project is created for the EN814710 course within GitHub as a repository. It serves as a space to store data, comprising frontend, backend, and database folders. Each folder contains a Dockerfile ready for use, and Docker-Compose that can create a "เว็บแอปพลิเคชั่นจำลองการผ่อนบ้าน" for immediate use.
-  - app : backend
-  - db : database
-  - frontend : frontend
-  ### Member
-  - นายกฤษณะ  พุ่มพยอม  633040145-9
-  - นายกิตินันท์  กุณโฮง   633040148-3
-  - นายตรีเพชร ตรีจันทร์   633040156-4
-  - นายเสฎฐวุฒิ นัตธิลม    633040607-7
+# Mortgage Calculator Pro : เครื่องมือคำนวณสินเชื่อบ้านออนไลน์
+
+A professional mortgage calculator application for Thai financial planning. This modern web application helps users calculate loan payments, understand interest rates, and plan their finances with accurate Thai bank data.
+
+## 🏗️ Architecture
+
+- **backend**: Flask API server with MySQL database
+- **frontend**: React application with modern UI
+- **database**: MySQL with Thai bank interest rate data
   ### เริ่มต้นติดตั้ง Docker
   ```sh
   sudo apt-get update
