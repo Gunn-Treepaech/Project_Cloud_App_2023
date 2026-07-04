@@ -3,7 +3,8 @@ import { PieChart, SummaryCard } from "../../components";
 import ScheduleTable from "../tables/ScheduleTable";
 import { formatCurrency } from "../../utils";
 import { THAI_BANKS } from "../../constants";
-import { Trophy, TrendingUp, TrendingDown } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, FileSpreadsheet } from "lucide-react";
+import { exportScheduleToExcel } from "../../utils/excelExport";
 
 // Custom Bank Select Component
 const CustomBankSelect = ({ banks, selectedIndex, onChange }) => {
@@ -424,6 +425,22 @@ const ConsolidatedResults = ({ banks, monthly_payment, initialLoan }) => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   ></svg>
+                </button>
+
+                <button
+                  onClick={() =>
+                    exportScheduleToExcel(
+                      selectedBank,
+                      monthlyPaymentNumber,
+                      initialLoan
+                    )
+                  }
+                  disabled={!selectedBank}
+                  className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="ดาวน์โหลดตารางผ่อนชำระเป็นไฟล์ Excel พร้อมสูตรคำนวณ"
+                >
+                  <FileSpreadsheet className="w-4 h-4" />
+                  ดาวน์โหลด Excel
                 </button>
               </div>
             </div>
